@@ -1,0 +1,36 @@
+import dotenv
+dotenv.load_dotenv("travel_concierge/.env")
+
+from google.adk.sessions import InMemorySessionService
+from google.adk.runners import Runner
+from google.genai import types
+from travel_concierge.agent import root_agent
+
+import asyncio
+
+# running session
+APP_NAME = "travel_concierge"
+USER_ID = "akhilesh"
+SESSION_ID = "session_akhilesh"
+
+session_service = InMemorySessionService()
+runner = Runner(agent=root_agent, app_name=APP_NAME, session_service=session_service)
+
+async def call_agent(query: str):
+    content = types.Content(role='user', parts=[types.Part(text=query)])
+    async for event in runner.run_async(user_id=USER_ID, session_id=SESSION_ID, new_message=content):
+        if event.is_final_response() and event.content is not None:
+            print(f"\nAgent: {"".join([part.text for part in event.content.parts])}")
+
+async def main():
+    await session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID)
+    print("Welcome to your Travel Concierge Agent! Type 'exit' to quit.\n")
+    while True:
+        query = input("You: ")
+        if query.lower() in {"exit", "quit"}:
+            print("Goodbye!")
+            break
+        await call_agent(query)
+
+# Run the main loop
+asyncio.run(main())
