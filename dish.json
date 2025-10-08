@@ -1,0 +1,58 @@
+[
+  {
+    "id": "D001",
+    "name": "Margherita Pizza",
+    "price": 299.0,
+    "ingredients": ["wheat flour", "tomato sauce", "mozzarella cheese", "basil", "olive oil"],
+    "category": "Main Course",
+    "description": "Classic Italian pizza with tomato, mozzarella, and basil."
+  },
+  {
+    "id": "D002",
+    "name": "Penne Alfredo",
+    "price": 349.0,
+    "ingredients": ["penne pasta", "cream", "parmesan", "garlic", "butter"],
+    "category": "Main Course",
+    "description": "Rich creamy pasta in Alfredo sauce."
+  },
+  {
+    "id": "D003",
+    "name": "Caesar Salad",
+    "price": 199.0,
+    "ingredients": ["romaine lettuce", "croutons", "parmesan", "anchovy dressing"],
+    "category": "Salad",
+    "description": "Fresh and crisp Caesar salad."
+  },
+  {
+    "id": "D004",
+    "name": "Tandoori Chicken",
+    "price": 399.0,
+    "ingredients": ["chicken", "yogurt", "spices", "lemon juice"],
+    "category": "Main Course",
+    "description": "Char-grilled chicken marinated in Indian spices."
+  },
+  {
+    "id": "D005",
+    "name": "Chocolate Lava Cake",
+    "price": 249.0,
+    "ingredients": ["dark chocolate", "flour", "sugar", "eggs", "butter"],
+    "category": "Dessert",
+    "description": "Warm chocolate cake with molten center."
+  },
+  {
+    "id": "D006",
+    "name": "Masala Chai",
+    "price": 99.0,
+    "ingredients": ["black tea", "milk", "cardamom", "ginger", "clove"],
+    "category": "Beverage",
+    "description": "Traditional Indian spiced tea."
+  },
+  {
+    "id": "D007",
+    "name": "Greek Gyro Wrap",
+    "price": 299.0,
+    "ingredients": ["pita bread", "lamb", "tzatziki sauce", "onion", "tomato"],
+    "category": "Snack",
+    "description": "Savory Greek lamb wrap with creamy sauce."
+  }
+]

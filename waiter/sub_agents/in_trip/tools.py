@@ -187,7 +187,7 @@ def _inspect_itinerary(state: dict[str: Any]):
     return itinerary, profile, current_datetime
 
 
-def transit_coordination(readonly_context: ReadonlyContext):
+def transit_coordination(readonly_context: ReadonlyContext) -> str:
     """Dynamically generates an instruction for the day_of agent."""
 
     state = readonly_context.state

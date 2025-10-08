@@ -1,7 +1,11 @@
 """Constants used as keys into ADK's session state."""
 
 SYSTEM_TIME = "_time"
-ITIN_INITIALIZED = "_itin_initialized"
+GUEST_INITIALIZED = "_initialized"
+
+RESTAURANT_NAME = "Hotel Agent"
+
+GUEST_KEY = "guest"
 
 ITIN_KEY = "itinerary"
 PROF_KEY = "user_profile"

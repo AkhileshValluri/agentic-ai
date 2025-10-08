@@ -31,10 +31,10 @@ poi_agent = LlmAgent(
     generate_content_config=json_response_config,
 )
 
-inspiration_agent = LlmAgent(
+preference_agent = LlmAgent(
     model="gemini-2.5-flash",
     name="inspiration_agent",
-    description="A travel inspiration agent who inspire users, and discover their next vacations; Provide information about places, activities, interests,",
+    description="Agent which speaks with the customer and figures out their preferences and allergies.",
     instruction=prompt.INSPIRATION_AGENT_INSTR,
     tools=[AgentTool(agent=place_agent), AgentTool(agent=poi_agent), map_tool],
 )
