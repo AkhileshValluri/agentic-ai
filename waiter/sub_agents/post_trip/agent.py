@@ -2,8 +2,8 @@
 
 from google.adk.agents import Agent
 
-from travel_concierge.sub_agents.post_trip import prompt
-from travel_concierge.tools.memory import memorize
+from waiter.sub_agents.post_trip import prompt
+from waiter.tools.memory import memorize
 
 post_trip_agent = Agent(
     model="gemini-2.5-flash",

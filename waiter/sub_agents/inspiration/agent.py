@@ -2,9 +2,9 @@
 
 from google.adk.agents import LlmAgent
 from google.adk.tools.agent_tool import AgentTool
-from travel_concierge.shared_libraries.types import DestinationIdeas, POISuggestions, json_response_config
-from travel_concierge.sub_agents.inspiration import prompt
-from travel_concierge.tools.places import map_tool
+from waiter.shared_libraries.types import DestinationIdeas, POISuggestions, json_response_config
+from waiter.sub_agents.inspiration import prompt
+from waiter.tools.places import map_tool
 
 
 place_agent = LlmAgent(

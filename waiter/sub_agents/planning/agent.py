@@ -3,9 +3,9 @@
 from google.adk.agents import LlmAgent
 from google.adk.tools.agent_tool import AgentTool
 from google.genai.types import GenerateContentConfig
-from travel_concierge.shared_libraries import types
-from travel_concierge.sub_agents.planning import prompt
-from travel_concierge.tools.memory import memorize
+from waiter.shared_libraries import types
+from waiter.sub_agents.planning import prompt
+from waiter.tools.memory import memorize
 
 
 itinerary_agent = LlmAgent(

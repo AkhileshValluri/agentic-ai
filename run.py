@@ -1,15 +1,15 @@
 import dotenv
-dotenv.load_dotenv("travel_concierge/.env")
+dotenv.load_dotenv("waiter/.env")
 
 from google.adk.sessions import InMemorySessionService
 from google.adk.runners import Runner
 from google.genai import types
-from travel_concierge.agent import root_agent
+from waiter.agent import root_agent
 
 import asyncio
 
 # running session
-APP_NAME = "travel_concierge"
+APP_NAME = "waiter"
 USER_ID = "akhilesh"
 SESSION_ID = "session_akhilesh"
 

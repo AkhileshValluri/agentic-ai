@@ -3,15 +3,15 @@
 from google.adk.agents import Agent
 from google.adk.tools.agent_tool import AgentTool
 
-from travel_concierge.sub_agents.in_trip import prompt
-from travel_concierge.sub_agents.in_trip.tools import (
+from waiter.sub_agents.in_trip import prompt
+from waiter.sub_agents.in_trip.tools import (
     transit_coordination,
     flight_status_check,
     event_booking_check,
     weather_impact_check,
 )
 
-from travel_concierge.tools.memory import memorize
+from waiter.tools.memory import memorize
 
 
 # This sub-agent is expected to be called every day closer to the trip, and frequently several times a day during the trip.
