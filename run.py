@@ -20,7 +20,10 @@ async def call_agent(query: str):
     content = types.Content(role='user', parts=[types.Part(text=query)])
     async for event in runner.run_async(user_id=USER_ID, session_id=SESSION_ID, new_message=content):
         if event.is_final_response() and event.content is not None:
-            print(f"\nAgent: {"".join([part.text for part in event.content.parts])}")
+            try:
+                print(f"\nAgent: {"".join([part.text for part in event.content.parts])}")
+            except:
+                continue
 
 async def main():
     await session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID)
