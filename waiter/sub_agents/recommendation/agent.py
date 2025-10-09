@@ -9,7 +9,7 @@ from waiter.tools.memory import recommendation_model_init
 from waiter.models.schema import *
 recommendation_agent = Agent(
     model="gemini-2.0-flash",
-    name="recommendation_agent ",
+    name="recommendation_agent",
     description="Handles the recommendation, possible modifications, checking of dishes as per user query.",
     instruction=prompt.recommendation_agent_instr,
     tools=[

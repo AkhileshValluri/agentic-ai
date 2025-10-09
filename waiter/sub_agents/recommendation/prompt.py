@@ -1,4 +1,6 @@
 """Prompt for the booking agent and sub-agents."""
+import json 
+
 from google.adk.agents.readonly_context import ReadonlyContext
 from waiter.shared_libraries import constants 
 from waiter.models.schema import Dish, DishStore
@@ -27,16 +29,24 @@ critique = """
 """
 
 def recommendation_agent_instr(readonly_context: ReadonlyContext) -> str:
-    if readonly_context.state.get(constants.INITIAL_RECOMMENDATION_KEY, None) is None: 
-        # All dishes given to the model only in the first, after that only the 'filtered' dishes are provided
+    base_prompt = base_recommendation_prompt
+
+    # Determine whether this is the first or a refinement iteration
+    if readonly_context.state.get(constants.INITIAL_RECOMMENDATION_KEY, None) is None:
+        # First iteration → show all dishes
         dish_store = DishStore()
-        dish_dto: dict[str, list[str]] = {dish.name: dish.ingredients for dish in dish_store._dishes}
-        dish_info_prompt = dish_information.format(str(dish_dto))
+        dish_dto: dict[str, list[str]] = {
+            dish.name: dish.ingredients for dish in dish_store._dishes
+        }
+        dish_info_prompt = dish_information.format(
+            dish_info=json.dumps(dish_dto, indent=2)
+        )
         base_prompt += dish_info_prompt
-    else: 
-        # Only add the filtered names and critique to not pollute the agents prompt
-        base_prompt += previous_recommendations.format(constants.INITIAL_RECOMMENDATION_KEY)
-        base_prompt += critique.format(constants.INITIAL_CRITIQUE_KEY)
+    else:
+        # Refinement iteration → refer to placeholders for state injection
+        base_prompt += previous_recommendations.format(f"{{{constants.INITIAL_RECOMMENDATION_KEY}}}")
+        base_prompt += critique.format(issues=f"{{{constants.INITIAL_CRITIQUE_KEY}}}")
+
     return base_prompt
 
 

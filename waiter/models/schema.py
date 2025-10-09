@@ -43,6 +43,7 @@ class Dish(DB):
     ingredients: list[str]
     category: str
     description: str
+    id: Optional[str]
 
 class DishStore(DB):
     """
@@ -56,7 +57,8 @@ class DishStore(DB):
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
-            cls._dishes = cls._instance._load_json()
+            raw_dishes = cls._instance._load_json()
+            cls._dishes = [Dish(**d) for d in raw_dishes]  
         return cls._instance
 
     def all(self) -> List[Dish]:
@@ -64,7 +66,7 @@ class DishStore(DB):
 
     def save(self):
         for i, d in enumerate(self._dishes):
-            if d["id"] == self.id:
+            if d.id == self.id:
                 self._dishes[i] = asdict(self)
                 break
         else:
