@@ -14,6 +14,7 @@ from waiter.shared_libraries import constants
 
 SAMPLE_SCENARIO_PATH = "waiter/profiles/new_table_state.json"
 
+
 def memorize_list(key: str, value: str, tool_context: ToolContext):
     """
     Memorize pieces of information.
@@ -69,14 +70,45 @@ def forget(key: str, value: str, tool_context: ToolContext):
         tool_context.state[key].remove(value)
     return {"status": f'Removed "{key}": "{value}"'}
 
-def root_agent_init(callback_context: CallbackContext):
+def parse_user_query(callback_context: CallbackContext) -> str:
+    user_query = "".join([part.text for part in callback_context.user_content.parts])
+    return user_query 
+
+def guest_model_init(callback_context: CallbackContext):
     """
     Initializes the state for a new guest
 
     Args:
         callback_context: The callback context.
-    """    
-    if constants.GUEST_INITIALIZED in callback_context.state: 
+    """
+    if constants.GUEST_INITIALIZED in callback_context.state:
         return
-    
+    callback_context.state[constants.ERROR_KEY] = None
     callback_context.state[constants.GUEST_KEY] = Guest()
+    callback_context.state[constants.SPECIALS_KEY] = DishStore().specials()
+
+def recommendation_model_init(callback_context: CallbackContext):
+    """
+    Initializes the state of recommendation for new guest
+
+    Args:
+        callbcak_context: The callback context
+    """
+    # add all conditions to be able to initialize recommendations object
+    if constants.GUEST_INITIALIZED not in callback_context.state:
+        callback_context.state[constants.ERROR_KEY] = (
+            "All information about guest not gathered yet"
+        )
+        return
+
+    if constants.INITIAL_CRITIQUE_KEY not in callback_context.state: 
+        callback_context.state[constants.INITIAL_CRITIQUE_KEY] = None
+
+    if constants.INITIAL_RECOMMENDATION_KEY not in callback_context.state: 
+        callback_context.state[constants.RECOMMENDATION_KEY] = Recommendation(
+            guest_id=callback_context.state[constants.GUEST_KEY].id
+        )
+    
+    if constants.INITIAL_USER_QUERY_KEY not in callback_context.state: 
+        callback_context.state[constants.INITIAL_USER_QUERY_KEY] = parse_user_query(callback_context)
+

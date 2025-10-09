@@ -7,10 +7,6 @@ from google.adk.agents.callback_context import CallbackContext
 from waiter.sub_agents.recommendation import prompt
 from waiter.tools.memory import recommendation_model_init
 from waiter.models.schema import *
-
-def store_user_query(callback_context: CallbackContext):
-    callback_context.state[constants.INITIAL_USER_QUERY_KEY] = "".join([part.text for part in callback_context.user_content.parts])
-
 recommendation_agent = Agent(
     model="gemini-2.0-flash",
     name="recommendation_agent ",
@@ -21,8 +17,7 @@ recommendation_agent = Agent(
         DishStore.get_dish,
         Recommendation.add_suggestion,
     ],
-    output_key=constants.INITIAL_RECOMMENDATION_KEY,
-    before_agent_callback=store_user_query
+    output_key=constants.INITIAL_RECOMMENDATION_KEY
 )
 
 critique_agent = Agent(

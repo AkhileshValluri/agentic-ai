@@ -5,14 +5,10 @@ GUEST_INITIALIZED = "_initialized"
 
 RESTAURANT_NAME = "Hotel Agent"
 
+ERROR_KEY = "error"
 GUEST_KEY = "guest"
-
-ITIN_KEY = "itinerary"
-PROF_KEY = "user_profile"
-
-ITIN_START_DATE = "itinerary_start_date"
-ITIN_END_DATE = "itinerary_end_date"
-ITIN_DATETIME = "itinerary_datetime"
-
-START_DATE = "start_date"
-END_DATE = "end_date"
+RECOMMENDATION_KEY = "recommendation"
+SPECIALS_KEY = "specials"
+INITIAL_RECOMMENDATION_KEY = "_recommendation"
+INITIAL_CRITIQUE_KEY = "_critique"
+INITIAL_USER_QUERY_KEY = "_query"
