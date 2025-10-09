@@ -109,6 +109,22 @@ def recommendation_model_init(callback_context: CallbackContext):
             guest_id=callback_context.state[constants.GUEST_KEY].id
         )
     
-    if constants.INITIAL_USER_QUERY_KEY not in callback_context.state: 
-        callback_context.state[constants.INITIAL_USER_QUERY_KEY] = parse_user_query(callback_context)
+    callback_context.state[constants.USER_QUERY_KEY] = parse_user_query(callback_context)
 
+def order_model_init(callback_context: CallbackContext):
+    """
+    Initializes the state of the orders for the guest
+    """
+    if constants.GUEST_INITIALIZED not in callback_context.state: 
+        callback_context.state[constants.ERROR_KEY] = (
+            "All information about guest not gathered yet"
+        )
+        return
+    
+    if constants.ORDER_KEY not in callback_context.state:
+        callback_context.state[constants.ORDER_KEY] = Order(
+            guest_id = callback_context.state[constants.GUEST_KEY].id
+        )
+        print("Set order key ")
+
+    callback_context.state[constants.USER_QUERY_KEY] = parse_user_query(callback_context)

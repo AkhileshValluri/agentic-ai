@@ -92,7 +92,7 @@ class DishStore(DB):
     @staticmethod
     def request_modification(dish_name: str, modification: dict[str, str]) -> tuple[bool, str]:
         """
-        Check the number of guests being served, if high, reject modification
+        Request if the dish can be modified
 
         Args: 
             dish_name (str): Name of the dish to be modified
@@ -119,6 +119,7 @@ class DishStore(DB):
         if difficulty_to_satisfy > DIFFICULTY_THRESHHOLD:
             return (False, "Too many people currently in the restaurant")
         
+        print(f"REQUESTED MODIFICATION::DISH:{dish_name}|MODIFICIATIONS:{modification}")
         return (True, "")
 
     @staticmethod
@@ -243,8 +244,7 @@ class Guest(DB):
 @dataclass
 class Recommendation(DB): 
     guest_id: str
-    recommended_dishes: List[Dish]
-    reason: str
+    recommended_dishes: List[tuple[Dish, dict[str, str]]] # (dish, modifications)
     filename: str = "recommendation.json"
 
     def __post_init__(self): 
@@ -252,7 +252,6 @@ class Recommendation(DB):
         existing_guest = next([rec for rec in recs if rec["guest_id"] == self.guest_id], None)
         if existing_guest: 
             self.recommended_dishes = existing_guest["recommended_dishes"]
-            self.reason = existing_guest["reason"]
 
     def all(self) -> List["Recommendation"]:
         return [Recommendation(**r) for r in self._load_json()]
@@ -263,27 +262,51 @@ class Recommendation(DB):
         recs.append(asdict(self))
         self._save_json(recs)
 
+    def get_modifications_for_dish(self, dish: Dish) -> dict[str, str]: 
+        recommended_dish_ids: list[str] = [dish[0].id for dish in self.recommended_dishes]
+        if dish.id in recommended_dish_ids:
+            ind = recommended_dish_ids.index(dish.id)
+            return self.recommended_dishes[ind][1] 
+        return {}
+
+    def store_modifications_for_dish(self, dish: Dish, modifications: dict[str, str]): 
+        recommended_dish_ids: list[str] = [dish[0].id for dish in self.recommended_dishes]
+        ind = recommended_dish_ids.index(dish.id)
+
+        if dish.id not in recommended_dish_ids:
+            self.recommended_dishes.append((dish, modifications))
+            return
+        else: 
+            if len(modifications.keys()) == 0:
+                return
+            # merge modifications
+            self.recommended_dishes[ind][1] = modifications
+
     @staticmethod
-    def add_suggestion(tool_context: ToolContext, dish_name: str, reason: str): 
+    def save_recommendation(tool_context: ToolContext, dish_name: str, modifications: dict[str, str]): 
         """
-        Stores suggestion for dish in memory
+        Stores recommendation with modifications for dish in memory to persist changes to comply with allergy information
+        To be called if dish is already checked to be modifiable 
 
         Args: 
             dish_name (str): name of dish to be added exactly as is
-            reason (str): why dish was recommended 
-        
+            modification (dict(str, str)): Description of ingredients and their modifications
+
         Returns: 
-            Tuple: 
-                bool: Whether transaction was successfull or not
-                str: Reason for failure
+            Tuple:
+                bool: whether the modification is possible
+                str: reason modification isn't possible
+        
+        Example: 
+            save_recommendation("Margherita Pizza", {"Wheat flour": "Change to whole wheat", "basil": "remove"})
+            save_recommendation("Penne Alfredo", {"cream": "less", "garlic": "extra"})
         """
+        print("SAVING RECOMMENDATION for dish: ", dish_name)
         recommended_dish: Optional[Dish] = DishStore().get_dish(dish_name)
         if recommended_dish is None:
             return [False, "We don't make that dish or isn't in stock"]            
         recommendation_state: Recommendation = tool_context.state[constants.RECOMMENDATION_KEY]
-        if recommended_dish.id in [dish.id for dish in recommendation_state.recommended_dishes]:
-            return (True, "")
-        recommendation_state.recommended_dishes.append(recommended_dish)
+        recommendation_state.store_modifications_for_dish(recommended_dish, modifications)
         recommendation_state.save()
         return (True, "")
         
@@ -291,10 +314,8 @@ class Recommendation(DB):
 @dataclass
 class Order(DB):
     guest_id: str
-    dish_ids: List[str]
-    status: str = "pending"  # pending / preparing / served / completed
+    dishes: List[tuple[Dish, dict[str, str]]] # dishes with modifications according to preference
     filename: str = "order.json"
-    created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
 
     def all(self) -> List["Order"]:
         return [Order(**o) for o in self._load_json()]
@@ -304,3 +325,50 @@ class Order(DB):
         orders = [o for o in orders if o["id"] != self.id]
         orders.append(asdict(self))
         self._save_json(orders)
+
+    def get_dish_index(self, dish: Dish) -> int:
+        dish_ids: list[str] = [dish[0].id for dish in self.dishes]
+        return dish_ids.index(dish.id)
+
+    @staticmethod
+    def get_dishes(tool_context: ToolContext): 
+        """
+        Get the current dishes and their modifications
+        
+        Returns: 
+            List[tuple[Dish, dict[str, str]]] : list of dishes with their modifications as a tuple
+        """
+        return tool_context.state[constants.ORDER_KEY]["dishes"]
+
+    @staticmethod
+    def update_dishes(tool_context: ToolContext, dishes: list[str]):
+        """
+        Updates the current state of the dishes to be ordered
+
+        Args: 
+            dishes(list[str]): name of the dishes as a list
+        """
+        recommendation_state: Recommendation = tool_context.state[constants.RECOMMENDATION_KEY]
+        order_state: "Order" = tool_context.state[constants.ORDER_KEY]
+
+        for dish_name in dishes: 
+            dish: Dish = DishStore().get_dish(dish_name)
+            modifications: dict[str, str] = recommendation_state.get_modifications_for_dish(dish)
+            try: 
+                ind = order_state.get_dish_index(dish)
+                # new modifications
+                order_state.dishes[ind][1] = modifications
+            except:
+                # dish isn't added to order list yet  
+                order_state.dishes.append((dish, modifications))
+
+        order_state.save()
+    
+    @staticmethod
+    def place_order(tool_context: ToolContext):
+        """
+        Places the order of the dishes
+        """
+        order: "Order" = tool_context[constants.ORDER_KEY]
+        order.save()
+            
