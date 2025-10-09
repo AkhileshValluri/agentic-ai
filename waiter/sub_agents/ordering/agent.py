@@ -3,7 +3,7 @@
 from google.adk.agents import LlmAgent
 from google.adk.tools.agent_tool import AgentTool
 from waiter.shared_libraries.types import DestinationIdeas, POISuggestions, json_response_config
-from waiter.sub_agents.inspiration import prompt
+from waiter.sub_agents.ordering import prompt
 from waiter.tools.places import map_tool
 
 

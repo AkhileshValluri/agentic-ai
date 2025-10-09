@@ -4,7 +4,7 @@ from google.adk.agents import Agent
 from google.adk.tools.agent_tool import AgentTool
 from google.genai.types import GenerateContentConfig
 
-from waiter.sub_agents.booking import prompt
+from waiter.sub_agents.seating import prompt
 
 
 create_reservation = Agent(

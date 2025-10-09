@@ -4,7 +4,7 @@ from google.adk.agents import LlmAgent
 from google.adk.tools.agent_tool import AgentTool
 from google.genai.types import GenerateContentConfig
 from waiter.shared_libraries import types
-from waiter.sub_agents.planning import prompt
+from waiter.sub_agents.payment import prompt
 from waiter.tools.memory import memorize
 
 
