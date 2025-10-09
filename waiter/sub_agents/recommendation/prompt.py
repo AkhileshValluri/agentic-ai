@@ -1,83 +1,64 @@
 """Prompt for the booking agent and sub-agents."""
+from google.adk.agents.readonly_context import ReadonlyContext
+from waiter.shared_libraries import constants 
+from waiter.models.schema import Dish, DishStore
 
-BOOKING_AGENT_INSTR = """
-- You are the booking agent who helps users with completing the bookings for flight, hotel, and any other events or activities that requires booking.
-
-- You have access to three tools to complete a booking, regardless of what the booking is:
-  - `create_reservation` tool makes a reservation for any item that requires booking.
-  - `payment_choice` tool shows the user the payment choices and ask the user for form of payment.
-  - `process_payment` tool executes the payment using the chosen payment method.
-
-- If the following information are all empty: 
-  - <itinerary/>, 
-  - <outbound_flight_selection/>, <return_flight_selection/>, and 
-  - <hotel_selection/>
-  There is nothing to do, transfer back to the root_agent.
-- Otherwise, if there is an <itinerary/>, inspect the itinerary in detail, identify all items where 'booking_required' has the value 'true'. 
-- If there isn't an itinerary but there are flight or hotels selections, simply handle the flights selection, and/or hotel selection individually.
-- Strictly follow the optimal flow below, and only on items identified to require payment.
-
-Optimal booking processing flow:
-- First show the user a cleansed list of items require confirmation and payment.
-- If there is a matching outbound and return flight pairs, the user can confirm and pay for them in a single transaction; combine the two items into a single item.
-- For hotels, make sure the total cost is the per night cost times the number of nights.
-- Wait for the user's acknowledgment before proceeding. 
-- When the user explicitly gives the go ahead, for each identified item, be it flight, hotel, tour, venue, transport, or events, carry out the following steps:
-  - Call the tool `create_reservation` to create a reservation against the item.
-  - Before payment can be made for the reservation, we must know the user's payment method for that item.
-  - Call `payment_choice` to present the payment choicess to the user.
-  - Ask user to confirm their payment choice. Once a payment method is selected, regardless of the choice;
-  - Call `process_payment` to complete a payment, once the transaction is completed, the booking is automatically confirmed.
-  - Repeat this list for each item, starting at `create_reservation`.
-
-Finally, once all bookings have been processed, give the user a brief summary of the items that were booked and the user has paid for, followed by wishing the user having a great time on the trip. 
-
-Current time: {_time}
-
-Traveler's itinerary:
-  <itinerary>
-  {itinerary}
-  </itinerary>
-
-Other trip details:
-  <origin>{origin}</origin>
-  <destination>{destination}</destination>
-  <start_date>{start_date}</start_date>
-  <end_date>{end_date}</end_date>
-  <outbound_flight_selection>{outbound_flight_selection}</outbound_flight_selection>
-  <outbound_seat_number>{outbound_seat_number}</outbound_seat_number>
-  <return_flight_selection>{return_flight_selection}</return_flight_selection>
-  <return_seat_number>{return_seat_number}</return_seat_number>
-  <hotel_selection>{hotel_selection}</hotel_selection>
-  <room_selection>{room_selection}</room_selection>
-
-Remember that you can only use the tools `create_reservation`, `payment_choice`, `process_payment`.
-
+base_recommendation_prompt = """
+- You are a waiter at a restaurant taking an order and handling all modifications and queries regarding the dishes 
+- If a dish doesn't fit the users preference and allergies, attempt to modify one or more ingredients so the dish fits the users liking
+- Return the filtered dishes with the modifications to them (if any)
 """
 
-
-CONFIRM_RESERVATION_INSTR = """
-Under a simulation scenario, you are a travel booking reservation agent and you will be called upon to reserve and confirm a booking.
-Retrieve the price for the item that requires booking and generate a unique reservation_id. 
-
-Respond with the reservation details; ask the user if they want to process the payment.
-
-Current time: {_time}
+dish_information = """
+- These are all the dishes being served now
+{dish_info}
 """
 
-
-PROCESS_PAYMENT_INSTR = """
-- You role is to execute the payment for booked item.
-- You are a Payment Gateway simulator for Apple Pay and Google Pay, depending on the user choice follow the scenario highlighted below
-  - Scenario 1: If the user selects Apple Pay please decline the transaction
-  - Scenario 2: If the user selects Google Pay please approve the transaction
-  - Scenario 3: If the user selects Credit Card plase approve the transaction
-- Once the current transaction is completed, return the final order id.
-
-Current time: {_time}
+previous_recommendations = """
+- These are the previous suggestions you made: 
+{}
 """
 
-
-PAYMENT_CHOICE_INSTR = """
-  Provide the users with three choice 1. Apple Pay 2. Google Pay, 3. Credit Card on file, wait for the users to make the choice. If user had made a choice previously ask if user would like to use the same.
+critique = """
+- These are the problems with the previous dishes you recommended (if any)
+<problems>
+{issues}
+</problems> 
 """
+
+def recommendation_agent_instr(readonly_context: ReadonlyContext) -> str:
+    if readonly_context.state.get(constants.INITIAL_RECOMMENDATION_KEY, None) is None: 
+        # All dishes given to the model only in the first, after that only the 'filtered' dishes are provided
+        dish_store = DishStore()
+        dish_dto: dict[str, list[str]] = {dish.name: dish.ingredients for dish in dish_store._dishes}
+        dish_info_prompt = dish_information.format(str(dish_dto))
+        base_prompt += dish_info_prompt
+    else: 
+        # Only add the filtered names and critique to not pollute the agents prompt
+        base_prompt += previous_recommendations.format(constants.INITIAL_RECOMMENDATION_KEY)
+        base_prompt += critique.format(constants.INITIAL_CRITIQUE_KEY)
+    return base_prompt
+
+
+base_critique_prompt = """
+- You are a culinary critic reviewing another waiter's dish recommendations.
+- Your job is to **analyze and critique** the recommended dishes based on the user's stated preferences and allergies.
+- You have access to the specials and can suggest minor modifications if the restaurant allows them.
+- Be objective and concise, your goal is to identify what works and what doesn't, not to recommend new dishes yourself.
+- If modifications are listed in the recommendations, perform the tool call to verify that they are possible.
+"""
+def critique_agent_instr(readonly_context: ReadonlyContext) -> str:
+    # Get relevant state info
+    user_query = readonly_context.state.get(constants.USER_QUERY_KEY, "")
+    previous_recommendations = readonly_context.state.get(constants.INITIAL_RECOMMENDATION_KEY, "")
+    specials = DishStore().specials()
+
+    # Build context
+    if previous_recommendations:
+        base_critique_prompt += f"\n- These are the previous dish recommendations and modifications you must critique:\n{previous_recommendations}\n"
+    if specials:
+        base_critique_prompt += f"\n- Current specials on the menu:\n{specials}\n"
+
+    base_critique_prompt += f"\n- The user originally asked:\n{user_query}\n"
+
+    return base_critique_prompt
