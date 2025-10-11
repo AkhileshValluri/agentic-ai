@@ -1,11 +1,7 @@
 [
   {
-    "name": "",
-    "preferences": [
-      "no spicy",
-      "no thai",
-      "no sweet"
-    ],
+    "name": "Sarvesh",
+    "preferences": [],
     "allergies": [],
     "history": [],
     "filename": "guest.json"

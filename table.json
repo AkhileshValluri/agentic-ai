@@ -1,0 +1,132 @@
+[
+  {
+    "tableNumber": "T002",
+    "tableCapacity": 4,
+    "tableSpecial": [
+      "Near Bar",
+      "VIP"
+    ],
+    "currentlyOccupied": true
+  },
+  {
+    "tableNumber": "T003",
+    "tableCapacity": 6,
+    "tableSpecial": [
+      "Family Section"
+    ],
+    "currentlyOccupied": false
+  },
+  {
+    "tableNumber": "T004",
+    "tableCapacity": 8,
+    "tableSpecial": [
+      "Birthday Setup",
+      "Private Area"
+    ],
+    "currentlyOccupied": true
+  },
+  {
+    "tableNumber": "T006",
+    "tableCapacity": 4,
+    "tableSpecial": [
+      "Outdoor Seating"
+    ],
+    "currentlyOccupied": true
+  },
+  {
+    "tableNumber": "T008",
+    "tableCapacity": 10,
+    "tableSpecial": [
+      "Conference",
+      "Private Area"
+    ],
+    "currentlyOccupied": false
+  },
+  {
+    "tableNumber": "T009",
+    "tableCapacity": 4,
+    "tableSpecial": [
+      "Near Entrance"
+    ],
+    "currentlyOccupied": true
+  },
+  {
+    "tableNumber": "T010",
+    "tableCapacity": 2,
+    "tableSpecial": [
+      "Romantic Setup",
+      "Candlelight"
+    ],
+    "currentlyOccupied": false
+  },
+  {
+    "tableNumber": "T011",
+    "tableCapacity": 8,
+    "tableSpecial": [
+      "Family Section",
+      "Birthday Setup"
+    ],
+    "currentlyOccupied": true
+  },
+  {
+    "tableNumber": "T012",
+    "tableCapacity": 6,
+    "tableSpecial": [
+      "VIP",
+      "Private Area"
+    ],
+    "currentlyOccupied": false
+  },
+  {
+    "tableNumber": "T013",
+    "tableCapacity": 4,
+    "tableSpecial": [
+      "Outdoor Seating",
+      "Smoking Area"
+    ],
+    "currentlyOccupied": false
+  },
+  {
+    "tableNumber": "T014",
+    "tableCapacity": 12,
+    "tableSpecial": [
+      "Banquet",
+      "Private Area"
+    ],
+    "currentlyOccupied": true
+  },
+  {
+    "tableNumber": "T001",
+    "tableCapacity": 2,
+    "tableSpecial": [
+      "Window Seat"
+    ],
+    "currentlyOccupied": true,
+    "filename": "table.json"
+  },
+  {
+    "tableNumber": "T005",
+    "tableCapacity": 2,
+    "tableSpecial": [],
+    "currentlyOccupied": true,
+    "filename": "table.json"
+  },
+  {
+    "tableNumber": "T015",
+    "tableCapacity": 3,
+    "tableSpecial": [
+      "Near Kitchen"
+    ],
+    "currentlyOccupied": true,
+    "filename": "table.json"
+  },
+  {
+    "tableNumber": "T007",
+    "tableCapacity": 6,
+    "tableSpecial": [
+      "Corner Booth"
+    ],
+    "currentlyOccupied": true,
+    "filename": "table.json"
+  }
+]
