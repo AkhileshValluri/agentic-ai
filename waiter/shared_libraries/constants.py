@@ -13,3 +13,8 @@ INITIAL_RECOMMENDATION_KEY = "_recommendation"
 INITIAL_CRITIQUE_KEY = "_critique"
 USER_QUERY_KEY = "_query"
 ORDER_KEY = "order"
+INITIAL_USER_QUERY_KEY = "_query"
+
+TABLE_KEY="table"
+TABLES="tables"
+SEATING_INITIALIZED = "_initialized"

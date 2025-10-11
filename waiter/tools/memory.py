@@ -128,3 +128,19 @@ def order_model_init(callback_context: CallbackContext):
         print("Set order key ")
 
     callback_context.state[constants.USER_QUERY_KEY] = parse_user_query(callback_context)
+    if constants.INITIAL_USER_QUERY_KEY not in callback_context.state: 
+        callback_context.state[constants.INITIAL_USER_QUERY_KEY] = parse_user_query(callback_context)
+
+def seating_state_init(callback_context: CallbackContext):
+    """
+    Initializes the state of seating for new guest
+
+    Args:
+        callback_context: The callback context
+    """
+    if constants.SEATING_INITIALIZED in callback_context.state:
+        return f'Error: Table already allotted, cannot be done again'
+
+    callback_context.state[constants.ERROR_KEY] = None
+    callback_context.state[constants.TABLE_KEY] = ""
+    callback_context.state[constants.TABLES] = TableStore().get_tables()
