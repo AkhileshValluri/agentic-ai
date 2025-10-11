@@ -375,10 +375,11 @@ class Order(DB):
 
 @dataclass
 class Table(DB):
-    tableNumber: str = field(default_factory=str)
-    tableCapacity: int = field(default_factory=int)
-    tableSpecial:List[str] = field(default_factory=list)
-    currentlyOccupied: bool = field(default_factory=bool)
+    tableNumber: str 
+    tableCapacity: int
+    tableSpecial:List[str]
+    currentlyOccupied: bool
+    guest_id: Optional[str]
 
     filename: str = "table.json"
 
@@ -390,9 +391,15 @@ class Table(DB):
         tables.append(asdict(self))
 
         self._save_json(tables)
+    
+    def reserve(self, guest_id: str): 
+        if self.currentlyOccupied: 
+            raise Exception(f"ERROR: Table {self.tableNumber} is already occupied")
+        self.currentlyOccupied = True
+        self.guest_id = guest_id
 
 
-class TableStore(DB):
+class TableStore:
     """
     Class to access the state of available tables
     """
@@ -400,18 +407,11 @@ class TableStore(DB):
     _tables: List[Table] = []
     filename: str = "table.json"
 
-    def __new__(cls, *args, **kwargs):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-            cls._tables = cls._instance._load_json()
-        return cls._instance
-    
-    def all(self) -> List[Table]:
-        return [Table(**t) for t in self._tables]
-    
+    def _get_tables(self) -> list[Table]:
+        return [t for t in self._tables if not t.currentlyOccupied]
 
     @staticmethod
-    def get_tables() -> "List[Table]":
+    def get_tables(tool_context: ToolContext) -> list[Table]:
         """
         Gets a list of available tables according to user preference
 
@@ -420,32 +420,30 @@ class TableStore(DB):
         Returns:
             List[Table]: List of available tables according to user preference
         """
-
-        return [t for t in TableStore().all() if not t.currentlyOccupied]
+        table_state: "TableStore" = tool_context.state[constants.TABLE_KEY]
+        return table_state._get_tables()
     
     @staticmethod
-    def allot_table(tableNumber: str, tool_context: ToolContext):
+    def allot_table(tool_context: ToolContext, tableNumber: str):
         """
         Allots the table with the matching table number to the guest
 
         Args:
             tableNumber: The number of the table to allot. 
+        
+        Returns: 
+            str: Error or Sucess and reason
         """
 
-        for table in TableStore.get_tables():
+        tablestore_state: "TableStore" = tool_context.state[constants.TABLE_KEY]
+        guest: Guest = tool_context.state[constants.GUEST_KEY]
+        for table in tablestore_state.get_tables(): 
             if str(table.tableNumber) == str(tableNumber):
-                
-                if table.currentlyOccupied:
-                    return f"ERROR: Table {tableNumber} is already occupied."
-
-                table.currentlyOccupied = True
-                tool_context.state["SEATING_INITIALIZED"] = True
-                tool_context.state["table"] = asdict(table)
+                try: 
+                    table.reserve(guest.id)
+                except Exception as e:
+                    return str(e)
                 table.save()
-
-                
-                tool_context.state[constants.TABLES] = TableStore().get_tables()
-
                 return f"SUCCESS: Table {tableNumber} is now reserved."
         
         return f"ERROR: Table {tableNumber} not found."

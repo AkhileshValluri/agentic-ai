@@ -81,7 +81,7 @@ def guest_model_init(callback_context: CallbackContext):
     Args:
         callback_context: The callback context.
     """
-    if constants.GUEST_INITIALIZED in callback_context.state:
+    if constants.GUEST_KEY in callback_context.state:
         return
     callback_context.state[constants.ERROR_KEY] = None
     callback_context.state[constants.GUEST_KEY] = Guest()
@@ -95,7 +95,7 @@ def recommendation_model_init(callback_context: CallbackContext):
         callbcak_context: The callback context
     """
     # add all conditions to be able to initialize recommendations object
-    if constants.GUEST_INITIALIZED not in callback_context.state:
+    if constants.GUEST_KEY not in callback_context.state:
         callback_context.state[constants.ERROR_KEY] = (
             "All information about guest not gathered yet"
         )
@@ -138,9 +138,15 @@ def seating_state_init(callback_context: CallbackContext):
     Args:
         callback_context: The callback context
     """
-    if constants.SEATING_INITIALIZED in callback_context.state:
-        return f'Error: Table already allotted, cannot be done again'
+    print("In seating init")
+    if constants.GUEST_KEY not in callback_context.state: 
+        callback_context.state[constants.ERROR_KEY] = (
+            "Gather information about guest first"
+        )
+        return
+
+    if constants.TABLE_KEY in callback_context.state:
+        return 
 
     callback_context.state[constants.ERROR_KEY] = None
-    callback_context.state[constants.TABLE_KEY] = ""
-    callback_context.state[constants.TABLES] = TableStore().get_tables()
+    callback_context.state[constants.TABLE_KEY] = TableStore()

@@ -10,8 +10,8 @@ seating_agent = Agent(
     description="Handles the table selection for incoming guests",
     instruction=prompt.seating_agent_instr,
     tools=[
-        TableStore.get_tables,
-        TableStore.allot_table
+        TableStore.allot_table,
+        TableStore.get_tables
     ],
     before_agent_callback=seating_state_init
 )
