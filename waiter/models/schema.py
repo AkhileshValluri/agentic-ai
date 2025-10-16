@@ -13,10 +13,10 @@ class DB:
     id: str | None
     filename: str
 
-    def __post_init__(self):
-        if not Path(self.filename).exists(): # check that it exists
+    def __post_init__(self): 
+        if not Path(self.filename).exists(): # check that it exists 
             raise Exception(f"DB connection wasn't possible for: '{self.filename}'")
-        if not self.id:
+        if not self.id: 
             self.id = str(randint(1, 100))
 
     def _save_json(self, data: list[dict]):
@@ -33,18 +33,18 @@ class DB:
     @staticmethod
     def all() -> List["DB"]:
         raise NotImplementedError
-
-    def save(self):
+    
+    def save(self): 
         raise NotImplementedError
 
 @dataclass
 class Dish(DB):
-    name: str
+    name: str 
     price: float
     ingredients: list[str]
     category: str
     description: str
-    filename:str = field(default="dish.json", init=False)
+    filename:str = field(default="dish.json", init=False) 
 
     @staticmethod
     def all() -> List["Dish"]:
@@ -82,16 +82,16 @@ class Guest(DB):
 
 
 @dataclass
-class Recommendation(DB):
+class Recommendation(DB): 
     guest_id: str
     recommended_dishes: List[tuple[str, dict[str, str]]] # (dish_id, modifications)
     filename: str = field(default="recommendation.json", init=False)
 
-    def __post_init__(self):
+    def __post_init__(self): 
         # load history dynamically if guest already visited restaurant
         recs = self._load_json(Recommendation.filename)
         existing_guest = next([rec for rec in recs if rec["guest_id"] == self.guest_id], None)
-        if existing_guest:
+        if existing_guest: 
             self.recommended_dishes = existing_guest["recommended_dishes"]
 
     @staticmethod
@@ -104,7 +104,7 @@ class Recommendation(DB):
         recs.append(asdict(self))
         self._save_json(recs)
 
-
+        
 
 @dataclass
 class Order(DB):
@@ -148,11 +148,12 @@ class Table(DB):
         Allots the table with the matching table number to the guest
 
         Args:
-            tableNumber: The number of the table to allot.
-
-        Returns:
+            tableNumber: The number of the table to allot. 
+        
+        Returns: 
             str: Error or Sucess and reason
         """
         self.guest_id = guest_id
         self.occupied = True
         self.save()
+                
