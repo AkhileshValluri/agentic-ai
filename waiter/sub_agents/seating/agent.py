@@ -1,7 +1,7 @@
 from google.adk.agents import Agent
 from waiter.sub_agents.seating import prompt
 from waiter.tools.memory import seating_state_init
-from waiter.models.schema import *
+from waiter.models.services import *
 
 
 seating_agent = Agent(
@@ -10,8 +10,8 @@ seating_agent = Agent(
     description="Handles the table selection for incoming guests",
     instruction=prompt.seating_agent_instr,
     tools=[
-        TableStore.allot_table,
-        TableStore.get_tables
+        TableStore.get_tables,
+        TableStore.allot_to_guest
     ],
     before_agent_callback=seating_state_init
 )

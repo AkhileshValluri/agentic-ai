@@ -6,7 +6,7 @@ from google.genai.types import GenerateContentConfig
 
 from waiter.sub_agents.recommendation import prompt
 from waiter.tools.memory import recommendation_model_init
-from waiter.models.schema import *
+from waiter.models.services import *
 
 def exit_if_perfect(tool_context: ToolContext):
     """
@@ -22,7 +22,7 @@ recommendation_agent = Agent(
     instruction=prompt.recommendation_agent_instr,
     tools=[
         DishStore.specials,
-        DishStore.get_dish,
+        DishStore._get_dish,
     ],
     output_key=constants.INITIAL_RECOMMENDATION_KEY
 )
@@ -34,7 +34,7 @@ critique_agent = Agent(
     instruction=prompt.critique_agent_instr,
     tools=[
         DishStore.request_modification,
-        Recommendation.save_recommendation,
+        RecommendationService.save_recommendation,
         exit_if_perfect,
     ],
     output_key=constants.INITIAL_CRITIQUE_KEY

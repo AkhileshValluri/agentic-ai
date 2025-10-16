@@ -3,46 +3,49 @@ import json
 
 from google.adk.agents.readonly_context import ReadonlyContext
 from waiter.shared_libraries import constants 
-from waiter.models.schema import Dish, DishStore
+from waiter.models.schema import Dish
+from waiter.models.services import *
 
-base_recommendation_prompt = f"""
-- You are a waiter at a restaurant taking an order and handling all modifications and queries regarding the dishes 
-- If a dish doesn't fit the users preference and allergies, attempt to modify one or more ingredients so the dish fits the users liking
-- Return the filtered dishes with the modifications to them (if any)
-- The following is the users query
-<query>
-{{{constants.USER_QUERY_KEY}}}
-</query>
-"""
-
-user_preferences = """
-- The following are the users preferneces
-<preferences> 
-{preferences}
-</preferences>
-"""
-
-dish_information = """
-- These are all the dishes being served now
-{dish_info}
-"""
-
-previous_recommendations = """
-- These are the previous suggestions you made: 
-{}
-"""
-
-critique = """
-- These are the problems with the previous dishes you recommended (if any, take them into consideration and correct them)
-<problems>
-{issues}
-</problems> 
-"""
 
 def recommendation_agent_instr(readonly_context: ReadonlyContext) -> str:
+    base_recommendation_prompt = f"""
+    - You are a waiter at a restaurant taking an order and handling all modifications and queries regarding the dishes 
+    - If a dish doesn't fit the users preference and allergies, attempt to modify one or more ingredients so the dish fits the users liking
+    - Return the filtered dishes with the modifications to them (if any)
+    - The following is the users query
+    <query>
+    {{{constants.USER_QUERY_KEY}}}
+    </query>
+    """
+
+    user_preferences = """
+    - The following are the users preferneces
+    <preferences> 
+    {preferences}
+    </preferences>
+    """
+
+    dish_information = """
+    - These are all the dishes being served now
+    {dish_info}
+    """
+
+    previous_recommendations = """
+    - These are the previous suggestions you made: 
+    {}
+    """
+
+    critique = """
+    - These are the problems with the previous dishes you recommended (if any, take them into consideration and correct them)
+    <problems>
+    {issues}
+    </problems> 
+    """
+
     base_prompt = base_recommendation_prompt
+    guest_store: GuestStore = readonly_context.state[constants.GUEST_KEY]
     base_prompt += user_preferences.format(
-        preferences = readonly_context.state[constants.GUEST_KEY].preferences
+        preferences = guest_store.get_curr_guest(readonly_context.state).preferences
     )
 
     # Determine whether this is the first or a refinement iteration

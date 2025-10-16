@@ -3,7 +3,7 @@
 from google.adk.agents import LlmAgent
 from waiter.sub_agents.ordering import prompt
 from waiter.tools.places import map_tool
-from waiter.models.schema import Order, DishStore
+from waiter.models.services import OrderService, DishStore
 from waiter.tools.memory import order_model_init
 
 ordering_agent = LlmAgent(
@@ -11,6 +11,6 @@ ordering_agent = LlmAgent(
     name="inspiration_agent",
     description="Agent which takes a customers order and places the order",
     instruction=prompt.order_agent_instr,
-    tools=[Order.get_dishes, Order.update_dishes, Order.place_order],
+    tools=[OrderService.get_dishes, OrderService.update_dishes, OrderService.place_order],
     before_agent_callback=order_model_init
 )

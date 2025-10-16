@@ -7,6 +7,7 @@ GUEST_INITIALIZED = "_initialized"
 RESTAURANT_NAME = "Hotel Agent"
 
 # Guest metadata 
+PHASE_KEY = "phase"
 ERROR_KEY = "error"
 GUEST_KEY = "guest"
 

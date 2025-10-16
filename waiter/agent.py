@@ -9,7 +9,7 @@ from waiter.sub_agents.recommendation.agent import recommendations_refinement_lo
 from waiter.sub_agents.ordering.agent import ordering_agent
 
 from waiter.tools.memory import guest_model_init
-from waiter.models.schema import Guest
+from waiter.models.services import GuestStore
 
 root_agent = LlmAgent(
     model="gemini-2.0-flash",
@@ -22,5 +22,5 @@ root_agent = LlmAgent(
         ordering_agent
     ],
     before_agent_callback=guest_model_init,
-    tools=[Guest.new_guest, Guest.set_preferences, Guest.set_allergies]
+    tools=[GuestStore.new_guest, GuestStore.set_preferences, GuestStore.set_allergies]
 )
