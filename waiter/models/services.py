@@ -179,7 +179,7 @@ class RecommendationService:
     _recommendations: list[Recommendation] = []
     _guest: Optional[Guest] = None
 
-    def _init__(self, callback_context: CallbackContext):
+    def __init__(self, callback_context: CallbackContext):
         self._recommendations = Recommendation.all()
         current_guest: Guest = GuestStore().get_curr_guest(callback_context.state)
         self._guest = current_guest
