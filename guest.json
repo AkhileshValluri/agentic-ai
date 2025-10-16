@@ -1,66 +1,13 @@
 [
   {
-    "id": "86",
+    "id": "85",
     "name": "akhilesh",
     "preferences": [
-      "spicy"
-    ],
-    "allergies": [
-      "lactose"
-    ],
-    "history": []
-  },
-  {
-    "id": "55",
-    "name": "kaushik",
-    "preferences": [
       "spicy food"
     ],
     "allergies": [
       "lactose"
     ],
-    "history": []
-  },
-  {
-    "id": "20",
-    "name": "valluri",
-    "preferences": [
-      "spicy",
-      "vegetarian"
-    ],
-    "allergies": [
-      "lactose"
-    ],
-    "history": []
-  },
-  {
-    "id": "81",
-    "name": "valluri",
-    "preferences": [
-      "vegetarian",
-      "spicy"
-    ],
-    "allergies": [
-      "lactose"
-    ],
-    "history": []
-  },
-  {
-    "id": "60",
-    "name": "sarvesh",
-    "preferences": [
-      "spicy food"
-    ],
-    "allergies": [
-      "milk"
-    ],
-    "history": []
-  },
-  {
-    "id": "14",
-    "name": "valluri",
-    "preferences": [],
-    "allergies": [],
     "history": []
   }
 ]

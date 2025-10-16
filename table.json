@@ -31,7 +31,7 @@
     "environment": [
       "Near Entrance"
     ],
-    "occupied": true
+    "occupied": false
   },
   {
     "id": "T011",
@@ -40,7 +40,7 @@
       "Family Section",
       "Birthday Setup"
     ],
-    "occupied": true
+    "occupied": false
   },
   {
     "id": "T014",
@@ -55,14 +55,6 @@
     "id": "T005",
     "capacity": 2,
     "environment": [],
-    "occupied": false
-  },
-  {
-    "id": "T015",
-    "capacity": 3,
-    "environment": [
-      "Near Kitchen"
-    ],
     "occupied": false
   },
   {
@@ -94,32 +86,28 @@
     "guest_id": "86"
   },
   {
-    "id": "T007",
-    "capacity": 6,
-    "environment": [
-      "Corner Booth"
-    ],
-    "occupied": true,
-    "guest_id": "55"
-  },
-  {
     "id": "T001",
     "capacity": 2,
     "environment": [
       "Window Seat"
     ],
-    "occupied": true,
-    "guest_id": "20"
+    "occupied": false
   },
   {
-    "id": "T010",
-    "capacity": 2,
+    "id": "T015",
+    "capacity": 3,
     "environment": [
-      "Romantic Setup",
-      "Candlelight"
+      "Near Kitchen"
     ],
-    "occupied": true,
-    "guest_id": "81"
+    "occupied": false
+  },
+  {
+    "id": "T007",
+    "capacity": 6,
+    "environment": [
+      "Corner Booth"
+    ],
+    "occupied": false
   },
   {
     "id": "T013",
@@ -128,7 +116,15 @@
       "Outdoor Seating",
       "Smoking Area"
     ],
-    "occupied": true,
-    "guest_id": "60"
+    "occupied": false
+  },
+  {
+    "id": "T010",
+    "capacity": 2,
+    "environment": [
+      "Romantic Setup",
+      "Candlelight"
+    ],
+    "occupied": false
   }
 ]

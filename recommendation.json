@@ -87,33 +87,17 @@
     "reason": "Guest requested classic flavors with healthier tweaks; extra herbs and reduced sugar."
   },
   {
-    "id": "73",
-    "guest_id": "86",
-    "recommended_dishes": [],
-    "reason": ""
-  },
-  {
-    "id": "11",
-    "guest_id": "55",
-    "recommended_dishes": [],
-    "reason": ""
-  },
-  {
-    "id": "95",
-    "guest_id": "20",
-    "recommended_dishes": [],
-    "reason": ""
-  },
-  {
-    "id": "36",
-    "guest_id": "81",
-    "recommended_dishes": [],
-    "reason": ""
-  },
-  {
-    "id": "88",
-    "guest_id": "60",
-    "recommended_dishes": [],
-    "reason": ""
+    "id": "55",
+    "guest_id": "85",
+    "recommended_dishes": [
+      [
+        "greek gyro wrap",
+        {
+          "hot sauce": "add",
+          "tzatziki sauce": "lactose-free alternative"
+        }
+      ]
+    ],
+    "reason": "lactose-free tzatziki and spicy addition"
   }
 ]
