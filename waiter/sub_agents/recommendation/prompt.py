@@ -10,8 +10,8 @@ from waiter.models.services import *
 def recommendation_agent_instr(readonly_context: ReadonlyContext) -> str:
     base_recommendation_prompt = f"""
     - You are a waiter at a restaurant taking an order and handling all modifications and queries regarding the dishes 
-    - If a dish doesn't fit the users preference and allergies, attempt to modify one or more ingredients so the dish fits the users liking
-    - Return the filtered dishes with the modifications to them (if any)
+    - If a dish doesn't fit the users preference and allergies, call tool to try and modify ingredients to fit the users liking
+    - Respond with all the dishes which satisfy the users preference, for most of the other dishes try making modifications to ingredients to satisfy preference
     - The following is the users query
     <query>
     {{{constants.USER_QUERY_KEY}}}
@@ -19,7 +19,7 @@ def recommendation_agent_instr(readonly_context: ReadonlyContext) -> str:
     """
 
     user_preferences = """
-    - The following are the users preferneces
+    - The following are the users preferences
     <preferences> 
     {preferences}
     </preferences>
@@ -43,13 +43,14 @@ def recommendation_agent_instr(readonly_context: ReadonlyContext) -> str:
     """
 
     base_prompt = base_recommendation_prompt
-    guest_store: GuestStore = readonly_context.state[constants.GUEST_KEY]
+    guest = GuestStore().get_curr_guest(readonly_context.state)
     base_prompt += user_preferences.format(
-        preferences = guest_store.get_curr_guest(readonly_context.state).preferences
+        preferences = guest.preferences,
+        allergies = guest.allergies
     )
 
     # Determine whether this is the first or a refinement iteration
-    if readonly_context.state.get(constants.INITIAL_RECOMMENDATION_KEY, None) is None:
+    if readonly_context.state[constants.INITIAL_RECOMMENDATION_KEY] == "":
         # First iteration → show all dishes
         dish_store = DishStore()
         dish_dto: dict[str, list[str]] = {
@@ -67,25 +68,28 @@ def recommendation_agent_instr(readonly_context: ReadonlyContext) -> str:
 
 
 def critique_agent_instr(readonly_context: ReadonlyContext) -> str:
+    print("critique init")
     base_critique_prompt = """
     - You are a culinary critic reviewing another waiter's dish recommendations and modifications to dishes.
-    - Your job is to **analyze and critique** the recommended dishes based on the user's stated preferences and ALLERGIES and taste.
-    - You have access to the specials and can suggest minor modifications if the restaurant allows them, use appropriate tools to check
+    - Your job is to **analyze and critique** the recommended dishes based on the user's stated ALLERGIES.
     - Be objective and concise, your goal is to identify what works and what doesn't, not to recommend new dishes yourself.
-    - If modifications are listed in the recommendations, perform the tool call to verify that they are possible.
-    - If there are no changes to be done, after considering the allergies call the appropriate tool to exit the loop
+    - For ALL modifications are listed in the recommendations, perform the tool call to verify that they are possible.
+    - For ALL the recommendations which comply with allergies, save the recommendations using a tool call
     """
 
     # Get relevant state info
     user_query = readonly_context.state.get(constants.USER_QUERY_KEY, "")
     previous_recommendations = readonly_context.state.get(constants.INITIAL_RECOMMENDATION_KEY, "")
     specials = DishStore().specials()
+    allergies = GuestStore().get_curr_guest(readonly_context.state).allergies
 
     # Build context
     if previous_recommendations:
-        base_critique_prompt += f"\n- These are the previous dish recommendations and modifications you must critique:\n{previous_recommendations}\n"
+        base_critique_prompt += f"\n- These are the previous dish recommendations and modifications you must critique:'{previous_recommendations}'"
     if specials:
-        base_critique_prompt += f"\n- Current specials on the menu:\n{specials}\n"
+        base_critique_prompt += f"\n- Current specials on the menu:\n{specials}"
+    if len(allergies): 
+        base_critique_prompt += f"\n- These are the allergies that the user has: {allergies}"
 
     base_critique_prompt += f"\n- The user originally asked:\n{user_query}\n"
 
