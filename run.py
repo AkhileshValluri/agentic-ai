@@ -44,12 +44,33 @@ async def call_agent(query: str):
         new_message=content,
     ):
         agent_name = event.author or "agent"
-        indent = 0  # could track indentation by delegation depth if desired
+        indent = 0
 
-        # 🧠 Normal model output (final or partial)
-        if event.is_final_response() and event.content:
-            text = "".join([p.text for p in event.content.parts if hasattr(p, "text")])
-            log_line(f"{agent_name} ✅", text, C.GREEN, indent)
+        # 🧠 Handle model output (final or partial)
+        if event.is_final_response():
+            if event.content and hasattr(event.content, "parts"):
+                text_parts = [
+                    getattr(p, "text", None)
+                    for p in event.content.parts
+                    if getattr(p, "text", None)
+                ]
+                if text_parts:
+                    text = "".join(text_parts)
+                    log_line(f"{agent_name} ✅", text, C.GREEN, indent)
+                else:
+                    log_line(
+                        f"{agent_name} ⚙️",
+                        "Final response contained no text parts (likely function call or escalation).",
+                        C.DIM,
+                        indent,
+                    )
+            else:
+                log_line(
+                    f"{agent_name} ⚙️",
+                    "Final response had no content (likely loop exit or escalation).",
+                    C.DIM,
+                    indent,
+                )
 
         # 🧩 Tool / function calls
         function_calls = event.get_function_calls()
@@ -73,7 +94,7 @@ async def call_agent(query: str):
                     indent,
                 )
 
-        # 📦 State or artifact updates
+        # 🗂️ State or artifact updates
         if event.actions.state_delta:
             log_line(
                 f"{agent_name} 🗂️",
@@ -89,7 +110,7 @@ async def call_agent(query: str):
                 indent,
             )
 
-        # 🔁 Agent transfer / escalation
+        # 🔁 Escalation or transfer
         if event.actions.transfer_to_agent:
             log_line(
                 f"{agent_name} 🔁",
@@ -98,9 +119,14 @@ async def call_agent(query: str):
                 indent,
             )
         if event.actions.escalate:
-            log_line(f"{agent_name} ⤴️", "Escalated to higher-level agent", C.HEADER, indent)
+            log_line(
+                f"{agent_name} ⤴️",
+                "Escalated to higher-level agent (loop exit triggered).",
+                C.HEADER,
+                indent,
+            )
 
-        # 🧩 Catch-all for unexpected or debug content
+        # ℹ️ Debug fallback for unhandled events
         if not (
             event.is_final_response()
             or function_calls
@@ -110,8 +136,13 @@ async def call_agent(query: str):
             or event.actions.transfer_to_agent
             or event.actions.escalate
         ):
-            # if event only contains metadata or partial state
-            log_line(f"{agent_name} ℹ️", f"Event: {event.model_dump(exclude_none=True)}", C.DIM, indent)
+            log_line(
+                f"{agent_name} ℹ️",
+                f"Event (unhandled): {event.model_dump(exclude_none=True)}",
+                C.DIM,
+                indent,
+            )
+
 
 async def main():
     await session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID)
