@@ -1,132 +1,134 @@
 [
   {
-    "tableNumber": "T002",
-    "tableCapacity": 4,
-    "tableSpecial": [
+    "id": "T002",
+    "capacity": 4,
+    "environment": [
       "Near Bar",
       "VIP"
     ],
-    "currentlyOccupied": true
+    "occupied": true
   },
   {
-    "tableNumber": "T003",
-    "tableCapacity": 6,
-    "tableSpecial": [
-      "Family Section"
-    ],
-    "currentlyOccupied": false
-  },
-  {
-    "tableNumber": "T004",
-    "tableCapacity": 8,
-    "tableSpecial": [
+    "id": "T004",
+    "capacity": 8,
+    "environment": [
       "Birthday Setup",
       "Private Area"
     ],
-    "currentlyOccupied": true
+    "occupied": true
   },
   {
-    "tableNumber": "T006",
-    "tableCapacity": 4,
-    "tableSpecial": [
+    "id": "T006",
+    "capacity": 4,
+    "environment": [
       "Outdoor Seating"
     ],
-    "currentlyOccupied": true
+    "occupied": true
   },
   {
-    "tableNumber": "T008",
-    "tableCapacity": 10,
-    "tableSpecial": [
-      "Conference",
-      "Private Area"
-    ],
-    "currentlyOccupied": false
-  },
-  {
-    "tableNumber": "T009",
-    "tableCapacity": 4,
-    "tableSpecial": [
+    "id": "T009",
+    "capacity": 4,
+    "environment": [
       "Near Entrance"
     ],
-    "currentlyOccupied": true
+    "occupied": true
   },
   {
-    "tableNumber": "T010",
-    "tableCapacity": 2,
-    "tableSpecial": [
-      "Romantic Setup",
-      "Candlelight"
-    ],
-    "currentlyOccupied": false
-  },
-  {
-    "tableNumber": "T011",
-    "tableCapacity": 8,
-    "tableSpecial": [
+    "id": "T011",
+    "capacity": 8,
+    "environment": [
       "Family Section",
       "Birthday Setup"
     ],
-    "currentlyOccupied": true
+    "occupied": true
   },
   {
-    "tableNumber": "T012",
-    "tableCapacity": 6,
-    "tableSpecial": [
-      "VIP",
-      "Private Area"
-    ],
-    "currentlyOccupied": false
-  },
-  {
-    "tableNumber": "T013",
-    "tableCapacity": 4,
-    "tableSpecial": [
-      "Outdoor Seating",
-      "Smoking Area"
-    ],
-    "currentlyOccupied": false
-  },
-  {
-    "tableNumber": "T014",
-    "tableCapacity": 12,
-    "tableSpecial": [
+    "id": "T014",
+    "capacity": 12,
+    "environment": [
       "Banquet",
       "Private Area"
     ],
-    "currentlyOccupied": true
+    "occupied": false
   },
   {
-    "tableNumber": "T001",
-    "tableCapacity": 2,
-    "tableSpecial": [
-      "Window Seat"
-    ],
-    "currentlyOccupied": true,
-    "filename": "table.json"
+    "id": "T005",
+    "capacity": 2,
+    "environment": [],
+    "occupied": false
   },
   {
-    "tableNumber": "T005",
-    "tableCapacity": 2,
-    "tableSpecial": [],
-    "currentlyOccupied": true,
-    "filename": "table.json"
-  },
-  {
-    "tableNumber": "T015",
-    "tableCapacity": 3,
-    "tableSpecial": [
+    "id": "T015",
+    "capacity": 3,
+    "environment": [
       "Near Kitchen"
     ],
-    "currentlyOccupied": true,
-    "filename": "table.json"
+    "occupied": false
   },
   {
-    "tableNumber": "T007",
-    "tableCapacity": 6,
-    "tableSpecial": [
+    "id": "T003",
+    "capacity": 6,
+    "environment": [
+      "Family Section"
+    ],
+    "occupied": false
+  },
+  {
+    "id": "T012",
+    "capacity": 6,
+    "environment": [
+      "VIP",
+      "Private Area"
+    ],
+    "occupied": false,
+    "guest_id": "27"
+  },
+  {
+    "id": "T008",
+    "capacity": 6,
+    "environment": [
+      "Conference",
+      "Private Area"
+    ],
+    "occupied": false,
+    "guest_id": "86"
+  },
+  {
+    "id": "T007",
+    "capacity": 6,
+    "environment": [
       "Corner Booth"
     ],
-    "currentlyOccupied": true,
-    "filename": "table.json"
+    "occupied": true,
+    "guest_id": "55"
+  },
+  {
+    "id": "T001",
+    "capacity": 2,
+    "environment": [
+      "Window Seat"
+    ],
+    "occupied": true,
+    "guest_id": "20"
+  },
+  {
+    "id": "T010",
+    "capacity": 2,
+    "environment": [
+      "Romantic Setup",
+      "Candlelight"
+    ],
+    "occupied": true,
+    "guest_id": "81"
+  },
+  {
+    "id": "T013",
+    "capacity": 4,
+    "environment": [
+      "Outdoor Seating",
+      "Smoking Area"
+    ],
+    "occupied": true,
+    "guest_id": "60"
   }
 ]

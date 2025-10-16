@@ -1,17 +1,119 @@
 [
   {
+    "id": "R001",
     "guest_id": "G001",
-    "recommended_dishes": ["D002", "D007"],
-    "reason": "Based on past orders with Italian cuisine and dessert preferences."
+    "recommended_dishes": [
+      [
+        "Tandoori Chicken",
+        {
+          "yogurt": "skip yogurt for lactose intolerance"
+        }
+      ],
+      [
+        "Masala Chai",
+        {
+          "milk": "use almond milk instead"
+        }
+      ]
+    ],
+    "reason": "Guest prefers spicy Indian food but is allergic to dairy. Suggested Tandoori Chicken and Masala Chai with dairy-free options."
   },
   {
+    "id": "R002",
     "guest_id": "G002",
-    "recommended_dishes": ["D005", "D006"],
-    "reason": "Frequently orders creamy dishes and sweets."
+    "recommended_dishes": [
+      [
+        "Margherita Pizza",
+        {}
+      ],
+      [
+        "Chocolate Lava Cake",
+        {}
+      ]
+    ],
+    "reason": "Guest enjoys Italian cuisine and desserts; simple and authentic pizza with a sweet finish."
   },
   {
+    "id": "R003",
     "guest_id": "G003",
-    "recommended_dishes": ["D001", "D004"],
-    "reason": "Enjoys bold flavors and protein-rich meals."
+    "recommended_dishes": [
+      [
+        "Caesar Salad",
+        {
+          "anchovy dressing": "remove anchovy dressing for vegetarian preference"
+        }
+      ],
+      [
+        "Masala Chai",
+        {}
+      ]
+    ],
+    "reason": "Guest prefers light vegetarian dishes; served Caesar Salad without anchovies and traditional Masala Chai."
+  },
+  {
+    "id": "R004",
+    "guest_id": "G004",
+    "recommended_dishes": [
+      [
+        "Penne Alfredo",
+        {
+          "cream": "reduce cream for lighter texture"
+        }
+      ],
+      [
+        "Greek Gyro Wrap",
+        {}
+      ]
+    ],
+    "reason": "Guest wanted a mix of creamy and savory; balanced combination of Alfredo pasta and Greek wrap."
+  },
+  {
+    "id": "R005",
+    "guest_id": "G005",
+    "recommended_dishes": [
+      [
+        "Margherita Pizza",
+        {
+          "basil": "add extra basil"
+        }
+      ],
+      [
+        "Chocolate Lava Cake",
+        {
+          "sugar": "reduce sugar content"
+        }
+      ]
+    ],
+    "reason": "Guest requested classic flavors with healthier tweaks; extra herbs and reduced sugar."
+  },
+  {
+    "id": "73",
+    "guest_id": "86",
+    "recommended_dishes": [],
+    "reason": ""
+  },
+  {
+    "id": "11",
+    "guest_id": "55",
+    "recommended_dishes": [],
+    "reason": ""
+  },
+  {
+    "id": "95",
+    "guest_id": "20",
+    "recommended_dishes": [],
+    "reason": ""
+  },
+  {
+    "id": "36",
+    "guest_id": "81",
+    "recommended_dishes": [],
+    "reason": ""
+  },
+  {
+    "id": "88",
+    "guest_id": "60",
+    "recommended_dishes": [],
+    "reason": ""
   }
 ]
