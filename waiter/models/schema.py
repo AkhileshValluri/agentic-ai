@@ -1,60 +1,68 @@
-import json
+from __future__ import annotations
+from dataclasses import dataclass, field, asdict
+from typing import List, Optional
 from random import randint
-import uuid
-from dataclasses import dataclass, asdict, field
-from typing import Any, List, Optional
-from datetime import datetime
 from pathlib import Path
+import json
 
-from waiter.shared_libraries import constants
 
-@dataclass
+# ========== BASE CLASS ==========
+
+@dataclass(kw_only=True)
 class DB:
-    id: str | None
-    filename: str
+    id: Optional[str] = field(default=None)
+    _filename: str = field(default="db.json", repr=False)
 
-    def __post_init__(self): 
-        if not Path(self.filename).exists(): # check that it exists 
-            raise Exception(f"DB connection wasn't possible for: '{self.filename}'")
-        if not self.id: 
+    def __post_init__(self):
+        if not Path(self._filename).exists():
+            raise FileNotFoundError(f"DB connection wasn't possible for: '{self._filename}'")
+        if not self.id:
             self.id = str(randint(1, 100))
 
     def _save_json(self, data: list[dict]):
-        print("Saving to DB: ", Path(self.filename).absolute())
-        with open(self.filename, "w") as f:
+        print("Saving to DB:", Path(self._filename).absolute())
+        with open(self._filename, "w") as f:
             json.dump(data, f, indent=2)
 
     @staticmethod
     def _load_json(filename: str) -> list[dict]:
         path = Path(filename)
+        if not path.exists():
+            return []
         with open(path) as f:
             return json.load(f)
 
     @staticmethod
     def all() -> List["DB"]:
         raise NotImplementedError
-    
-    def save(self): 
+
+    def save(self):
         raise NotImplementedError
+
+    def to_dict(self):
+        d = asdict(self)
+        d.pop("_filename", None)
+        return d
+
+
+
+# ========== CHILD CLASSES ==========
 
 @dataclass
 class Dish(DB):
-    name: str 
-    price: float
-    ingredients: list[str]
-    category: str
-    description: str
-    filename:str = field(default="dish.json", init=False) 
+    name: Optional[str] = None
+    price: Optional[float] = None
+    ingredients: List[str] = field(default_factory=list)
+    category: Optional[str] = None
+    description: Optional[str] = None
+    _filename: str = field(default="dish.json", init=False, repr=False)
 
     @staticmethod
     def all() -> List["Dish"]:
-        return [Dish(**d) for d in Dish._load_json(Dish.filename)]
+        return [Dish(**d) for d in Dish._load_json(Dish._filename)]
 
     def save(self):
-        """
-        save the current guest instance to storage. overwrites existing guest with the same id.
-        """
-        dishes = self._load_json(Dish.filename)
+        dishes = self._load_json(Dish._filename)
         dishes = [d for d in dishes if d.get("id") != self.id]
         dishes.append(asdict(self))
         self._save_json(dishes)
@@ -62,62 +70,59 @@ class Dish(DB):
 
 @dataclass
 class Guest(DB):
-    name: str = field(default_factory=str)
+    name: Optional[str] = None
     preferences: List[str] = field(default_factory=list)
     allergies: List[str] = field(default_factory=list)
     history: List[Dish] = field(default_factory=list)
-    filename: str = field(default="guest.json", init=False)
+    _filename: str = field(default="guest.json", init=False, repr=False)
 
+    @staticmethod
     def all() -> List["Guest"]:
-        return [Guest(**g) for g in Guest._load_json(Guest.filename)]
+        return [Guest(**g) for g in Guest._load_json(Guest._filename)]
 
     def save(self):
-        """
-        save the current guest instance to storage. overwrites existing guest with the same id.
-        """
-        guests = self._load_json(Guest.filename)
+        guests = self._load_json(Guest._filename)
         guests = [g for g in guests if g.get("id") != self.id]
         guests.append(asdict(self))
         self._save_json(guests)
 
 
 @dataclass
-class Recommendation(DB): 
-    guest_id: str
-    recommended_dishes: List[tuple[str, dict[str, str]]] # (dish_id, modifications)
-    filename: str = field(default="recommendation.json", init=False)
+class Recommendation(DB):
+    guest_id: Optional[str] = None
+    recommended_dishes: List[tuple[str, dict[str, str]]] = field(default_factory=list)
+    _filename: str = field(default="recommendation.json", init=False, repr=False)
 
-    def __post_init__(self): 
-        # load history dynamically if guest already visited restaurant
-        recs = self._load_json(Recommendation.filename)
-        existing_guest = next([rec for rec in recs if rec["guest_id"] == self.guest_id], None)
-        if existing_guest: 
+    def __post_init__(self):
+        super().__post_init__()
+        recs = self._load_json(Recommendation._filename)
+        existing_guest = next((rec for rec in recs if rec["guest_id"] == self.guest_id), None)
+        if existing_guest:
             self.recommended_dishes = existing_guest["recommended_dishes"]
 
     @staticmethod
     def all() -> List["Recommendation"]:
-        return [Recommendation(**r) for r in Recommendation._load_json(Recommendation.filename)]
+        return [Recommendation(**r) for r in Recommendation._load_json(Recommendation._filename)]
 
     def save(self):
-        recs = self._load_json(Recommendation.filename)
+        recs = self._load_json(Recommendation._filename)
         recs = [r for r in recs if r["id"] != self.id]
         recs.append(asdict(self))
         self._save_json(recs)
 
-        
 
 @dataclass
 class Order(DB):
-    guest_id: str
-    dishes: List[tuple[Dish, dict[str, str]]] # dishes with modifications according to preference
-    filename: str = field(default="order.json", init=False)
+    guest_id: Optional[str] = None
+    dishes: List[tuple[Dish, dict[str, str]]] = field(default_factory=list)
+    _filename: str = field(default="order.json", init=False, repr=False)
 
     @staticmethod
     def all() -> List["Order"]:
-        return [Order(**o) for o in Order._load_json(Order.filename)]
+        return [Order(**o) for o in Order._load_json(Order._filename)]
 
     def save(self):
-        orders = self._load_json(Order.filename)
+        orders = self._load_json(Order._filename)
         orders = [o for o in orders if o["id"] != self.id]
         orders.append(asdict(self))
         self._save_json(orders)
@@ -125,35 +130,23 @@ class Order(DB):
 
 @dataclass
 class Table(DB):
-    capacity: int
-    environment:List[str]
-    occupied: bool
-    guest_id: Optional[str]
+    capacity: Optional[int] = None
+    environment: List[str] = field(default_factory=list)
+    occupied: bool = False
+    guest_id: Optional[str] = None
+    _filename: str = field(default="table.json", init=False, repr=False)
 
-    filename: str = field(default="table.json", init = False)
-
+    @staticmethod
     def all() -> List["Table"]:
-        return [Table(**t) for t in Table._load_json(Table.filename)]
+        return [Table(**t) for t in Table._load_json(Table._filename)]
 
     def save(self):
-        tables = self._load_json(Table.filename)
-
-        tables = [t for t in tables if str(t["tableNumber"]) != str(self.id)]
+        tables = self._load_json(Table._filename)
+        tables = [t for t in tables if str(t["id"]) != str(self.id)]
         tables.append(asdict(self))
-
         self._save_json(tables)
 
     def allot_table(self, guest_id: str):
-        """
-        Allots the table with the matching table number to the guest
-
-        Args:
-            tableNumber: The number of the table to allot. 
-        
-        Returns: 
-            str: Error or Sucess and reason
-        """
         self.guest_id = guest_id
         self.occupied = True
         self.save()
-                

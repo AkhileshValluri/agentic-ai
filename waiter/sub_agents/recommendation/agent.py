@@ -7,6 +7,7 @@ from google.genai.types import GenerateContentConfig
 from waiter.sub_agents.recommendation import prompt
 from waiter.tools.memory import recommendation_model_init
 from waiter.models.services import *
+from waiter.shared_libraries import constants
 
 def exit_if_perfect(tool_context: ToolContext):
     """

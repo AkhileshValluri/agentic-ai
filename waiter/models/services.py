@@ -3,6 +3,7 @@ from google.adk.agents.callback_context import CallbackContext
 from google.adk.sessions.state import State
 
 from waiter.models.schema import *
+from waiter.shared_libraries import constants
 
 class DishStore:
     """
@@ -104,7 +105,7 @@ class GuestStore:
     
     @staticmethod
     def get_curr_guest(state: State) -> Guest: 
-        curr_guest_id = getattr(state, constants.GUEST_KEY, None)
+        curr_guest_id = state[constants.GUEST_KEY]
         all_guest_ids: list[str] = [guest.id for guest in GuestStore()._guests]
         return GuestStore()._guests[all_guest_ids.index(curr_guest_id)]
 
@@ -126,6 +127,7 @@ class GuestStore:
         guest.save()
         guest_store: "GuestStore" = tool_context.state[constants.GUEST_KEY]
         guest_store._guests.append(guest)
+        tool_context.state[constants.GUEST_KEY] = guest.id
         return guest
     
     @staticmethod
