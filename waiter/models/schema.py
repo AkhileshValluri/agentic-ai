@@ -45,7 +45,6 @@ class DB:
         return d
 
 
-
 # ========== CHILD CLASSES ==========
 
 @dataclass
@@ -64,7 +63,7 @@ class Dish(DB):
     def save(self):
         dishes = self._load_json(Dish._filename)
         dishes = [d for d in dishes if d.get("id") != self.id]
-        dishes.append(asdict(self))
+        dishes.append(self.to_dict())
         self._save_json(dishes)
 
 
@@ -83,7 +82,7 @@ class Guest(DB):
     def save(self):
         guests = self._load_json(Guest._filename)
         guests = [g for g in guests if g.get("id") != self.id]
-        guests.append(asdict(self))
+        guests.append(self.to_dict())
         self._save_json(guests)
 
 
@@ -107,7 +106,7 @@ class Recommendation(DB):
     def save(self):
         recs = self._load_json(Recommendation._filename)
         recs = [r for r in recs if r["id"] != self.id]
-        recs.append(asdict(self))
+        recs.append(self.to_dict())
         self._save_json(recs)
 
 
@@ -124,7 +123,7 @@ class Order(DB):
     def save(self):
         orders = self._load_json(Order._filename)
         orders = [o for o in orders if o["id"] != self.id]
-        orders.append(asdict(self))
+        orders.append(self.to_dict())
         self._save_json(orders)
 
 
@@ -143,7 +142,7 @@ class Table(DB):
     def save(self):
         tables = self._load_json(Table._filename)
         tables = [t for t in tables if str(t["id"]) != str(self.id)]
-        tables.append(asdict(self))
+        tables.append(self.to_dict())
         self._save_json(tables)
 
     def allot_table(self, guest_id: str):
