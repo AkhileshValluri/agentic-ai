@@ -23,7 +23,6 @@ recommendation_agent = Agent(
     instruction=prompt.recommendation_agent_instr,
     tools=[
         DishStore.specials,
-        DishStore._get_dish,
     ],
     output_key=constants.INITIAL_RECOMMENDATION_KEY
 )

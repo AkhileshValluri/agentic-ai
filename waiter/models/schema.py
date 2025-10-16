@@ -89,7 +89,9 @@ class Guest(DB):
 @dataclass
 class Recommendation(DB):
     guest_id: Optional[str] = None
+    # dish name, {ingredient: modifications}
     recommended_dishes: List[tuple[str, dict[str, str]]] = field(default_factory=list)
+    reason: str = field(default_factory=str)
     _filename: str = field(default="recommendation.json", init=False, repr=False)
 
     def __post_init__(self):

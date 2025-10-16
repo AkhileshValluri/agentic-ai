@@ -48,8 +48,8 @@ def recommendation_model_init(callback_context: CallbackContext):
     callback_context.state[constants.PHASE_KEY] = "selection"
     if constants.RECOMMENDATION_KEY not in callback_context.state: 
         callback_context.state[constants.RECOMMENDATION_KEY] = RecommendationService(callback_context)
-        callback_context[constants.INITIAL_RECOMMENDATION_KEY] = ""
-        callback_context[constants.INITIAL_CRITIQUE_KEY] = ""
+        callback_context.state[constants.INITIAL_RECOMMENDATION_KEY] = ""
+        callback_context.state[constants.INITIAL_CRITIQUE_KEY] = ""
 
     callback_context.state[constants.ERROR_KEY] = None
     callback_context.state[constants.USER_QUERY_KEY] = parse_user_query(callback_context)

@@ -22,7 +22,7 @@ class DishStore:
     def _get_dish(self, dish_name: str) -> Optional[Dish]: 
         dish_names: list[str] = [dish.name.lower() for dish in self._dishes]
         try: 
-            return self._dishes[dish_names.index(dish_name)]
+            return self._dishes[dish_names.index(dish_name.lower())]
         except ValueError:
             return None
 
@@ -191,6 +191,7 @@ class RecommendationService:
                 guest_id=self._guest.id,
                 recommended_dishes=[]
             )
+            self._recommendation.save()
         
     def get_modifications_for_dish(self, dish: Dish) -> dict[str, str]: 
         # doesn't handle case when guest asks for multiple modifications of same dish
@@ -200,20 +201,23 @@ class RecommendationService:
         ind = recommended_dish_ids.index(dish.id)
         return self._recommendation.recommended_dishes[ind][1] 
 
-    def store_modifications_for_dish(self, dish: Dish, modifications: dict[str, str]): 
+    def store_modifications_for_dish(self, dish: Dish, modifications: dict[str, str], reason: str): 
         recommended_dish_ids: list[str] = [dish[0].id for dish in self._recommendation.recommended_dishes]
         if len(modifications.keys()) == 0:
             return
         if dish.id not in recommended_dish_ids:
             self._recommendation.recommended_dishes.append((dish, modifications))
+            self._recommendation.save()
             return
 
         ind = recommended_dish_ids.index(dish.id)
         # merge modifications to keep old info
         self._recommendation.recommended_dishes[ind][1] |= modifications
+        self._recommendation.reason += f"|{reason}"
+        self._recommendation.save()
 
     @staticmethod
-    def save_recommendation(tool_context: ToolContext, dish_name: str, modifications: dict[str, str]): 
+    def save_recommendation(tool_context: ToolContext, dish_name: str, modifications: dict[str, str], reason: str): 
         """
         Stores recommendation with modifications for dish in memory to persist changes to comply with allergy information
         To be called if dish is already checked to be modifiable 
@@ -221,6 +225,7 @@ class RecommendationService:
         Args: 
             dish_name (str): name of dish to be added exactly as is
             modification (dict(str, str)): Description of ingredients and their modifications
+            reason (str): reason for recommending dish with modifications
 
         Returns: 
             Tuple:
@@ -236,7 +241,7 @@ class RecommendationService:
         if recommended_dish is None:
             return [False, "We don't make that dish or isn't in stock"]            
         recommendation_service: RecommendationService = tool_context.state[constants.RECOMMENDATION_KEY]
-        recommendation_service.store_modifications_for_dish(recommended_dish, modifications)
+        recommendation_service.store_modifications_for_dish(recommended_dish, modifications, reason)
         return (True, "")
 
 class OrderService: 
