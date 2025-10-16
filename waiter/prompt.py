@@ -15,8 +15,6 @@ ROOT_AGENT_INSTR = f"""
 2. Seating
 3. Selection / Recommendation and modifications to dishes based on user preference and allergies
 4. Order placement 
-- Then if it seems like a phase is completed satisfactorily, suggest that the user move to the next phase, this is the current phase
-{{{PHASE_KEY}}}
 - You handle the completion of the introduction phase, any other phases will be handled by sub-agents
 
 - The error when for the user query is given below: 
