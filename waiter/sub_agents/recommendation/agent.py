@@ -22,7 +22,7 @@ recommendation_agent = Agent(
     description="Handles the recommendation, possible modifications, checking of dishes as per user query.",
     instruction=prompt.recommendation_agent_instr,
     tools=[
-        DishStore.specials,
+        DishStore.request_modification,
     ],
     output_key=constants.INITIAL_RECOMMENDATION_KEY
 )

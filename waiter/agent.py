@@ -22,6 +22,5 @@ root_agent = LlmAgent(
         ordering_agent
     ],
     before_agent_callback=guest_model_init,
-    tools=[GuestStore.new_guest, GuestStore.set_preferences, GuestStore.set_allergies],
-    disallow_transfer_to_peers=True
+    tools=[GuestStore.new_guest, GuestStore.set_preferences, GuestStore.set_allergies]
 )

@@ -68,26 +68,22 @@ def recommendation_agent_instr(readonly_context: ReadonlyContext) -> str:
 
 
 def critique_agent_instr(readonly_context: ReadonlyContext) -> str:
-    print("critique init")
     base_critique_prompt = """
     - You are a culinary critic reviewing another waiter's dish recommendations and modifications to dishes.
-    - Your job is to **analyze and critique** the recommended dishes based on the user's stated ALLERGIES.
+    - Your job is to **analyze and critique** the recommended dishes based on the user's stated ALLERGIES and check if the modifications are possible and accepted.
     - Be objective and concise, your goal is to identify what works and what doesn't, not to recommend new dishes yourself.
     - For ALL modifications are listed in the recommendations, perform the tool call to verify that they are possible.
-    - For ALL the recommendations which comply with allergies, save the recommendations using a tool call
+    - For ALL the recommendations which comply with allergies, if THE MODIFICATIONS ARE POSSIBLE: save the recommendations using a tool call
     """
 
     # Get relevant state info
     user_query = readonly_context.state.get(constants.USER_QUERY_KEY, "")
     previous_recommendations = readonly_context.state.get(constants.INITIAL_RECOMMENDATION_KEY, "")
-    specials = DishStore().specials()
     allergies = GuestStore().get_curr_guest(readonly_context.state).allergies
 
     # Build context
     if previous_recommendations:
         base_critique_prompt += f"\n- These are the previous dish recommendations and modifications you must critique:'{previous_recommendations}'"
-    if specials:
-        base_critique_prompt += f"\n- Current specials on the menu:\n{specials}"
     if len(allergies): 
         base_critique_prompt += f"\n- These are the allergies that the user has: {allergies}"
 

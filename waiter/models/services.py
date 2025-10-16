@@ -29,7 +29,7 @@ class DishStore:
     @staticmethod
     def request_modification(dish_name: str, modification: dict[str, str]) -> tuple[bool, str]:
         """
-        Request if the dish can be modified
+        Check if the proposed modification to the dish is accepted or not
 
         Args: 
             dish_name (str): Name of the dish to be modified
@@ -195,25 +195,24 @@ class RecommendationService:
         
     def get_modifications_for_dish(self, dish: Dish) -> dict[str, str]: 
         # doesn't handle case when guest asks for multiple modifications of same dish
-        recommended_dish_ids: list[str] = [dish[0].id for dish in self._recommendation.recommended_dishes]
-        if dish.id not in recommended_dish_ids:
+        recommended_dish_names: list[str] = [dish_with_mods[0].lower() for dish_with_mods in self._recommendation.recommended_dishes]
+        if dish.name.lower() not in recommended_dish_names: 
             return {}
-        ind = recommended_dish_ids.index(dish.id)
+        ind = recommended_dish_names.index(dish.name.lower())
         return self._recommendation.recommended_dishes[ind][1] 
 
-    def store_modifications_for_dish(self, dish: Dish, modifications: dict[str, str], reason: str): 
-        recommended_dish_ids: list[str] = [dish[0].id for dish in self._recommendation.recommended_dishes]
-        if len(modifications.keys()) == 0:
-            return
-        if dish.id not in recommended_dish_ids:
-            self._recommendation.recommended_dishes.append((dish, modifications))
+    def store_recommended_dish(self, dish: Dish, modifications: dict[str, str], reason: str): 
+        recommended_dish_names: list[str] = [dish_with_mods[0].lower() for dish_with_mods in self._recommendation.recommended_dishes]
+        self._recommendation.reason += reason
+
+        if dish.name.lower() not in recommended_dish_names:
+            self._recommendation.recommended_dishes.append((dish.name.lower(), modifications))
             self._recommendation.save()
             return
 
-        ind = recommended_dish_ids.index(dish.id)
+        ind = recommended_dish_names.index(dish.name.lower())
         # merge modifications to keep old info
         self._recommendation.recommended_dishes[ind][1] |= modifications
-        self._recommendation.reason += f"|{reason}"
         self._recommendation.save()
 
     @staticmethod
@@ -236,12 +235,11 @@ class RecommendationService:
             save_recommendation("Margherita Pizza", {"Wheat flour": "Change to whole wheat", "basil": "remove"})
             save_recommendation("Penne Alfredo", {"cream": "less", "garlic": "extra"})
         """
-        print("SAVING RECOMMENDATION for dish: ", dish_name)
         recommended_dish: Optional[Dish] = DishStore()._get_dish(dish_name)
         if recommended_dish is None:
             return [False, "We don't make that dish or isn't in stock"]            
         recommendation_service: RecommendationService = tool_context.state[constants.RECOMMENDATION_KEY]
-        recommendation_service.store_modifications_for_dish(recommended_dish, modifications, reason)
+        recommendation_service.store_recommended_dish(recommended_dish, modifications, reason)
         return (True, "")
 
 class OrderService: 
