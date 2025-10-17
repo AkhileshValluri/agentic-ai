@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass, field, asdict
-from typing import List, Optional
+from typing import List, Optional, Union
 from random import randint
 from pathlib import Path
 import json
@@ -90,16 +90,9 @@ class Guest(DB):
 class Recommendation(DB):
     guest_id: Optional[str] = None
     # dish name, {ingredient: modifications}
-    recommended_dishes: List[tuple[str, dict[str, str]]] = field(default_factory=list)
+    recommended_dishes: List[List[Union[str, dict[str, str]]]] = field(default_factory=list)
     reason: str = field(default_factory=str)
     _filename: str = field(default="recommendation.json", init=False, repr=False)
-
-    def __post_init__(self):
-        super().__post_init__()
-        recs = self._load_json(Recommendation._filename)
-        existing_guest = next((rec for rec in recs if rec["guest_id"] == self.guest_id), None)
-        if existing_guest:
-            self.recommended_dishes = existing_guest["recommended_dishes"]
 
     @staticmethod
     def all() -> List["Recommendation"]:
@@ -116,7 +109,7 @@ class Recommendation(DB):
 class Order(DB):
     guest_id: Optional[str] = None
     # order name, modifications
-    dishes: List[tuple[str, dict[str, str]]] = field(default_factory=list)
+    dishes: List[List[Union[str, dict[str, str]]]] = field(default_factory=list)
     _filename: str = field(default="order.json", init=False, repr=False)
 
     @staticmethod

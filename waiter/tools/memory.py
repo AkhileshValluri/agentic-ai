@@ -58,12 +58,6 @@ def order_model_init(callback_context: CallbackContext):
     """
     Initializes the state of the orders for the guest
     """
-    if constants.GUEST_INITIALIZED not in callback_context.state: 
-        callback_context.state[constants.ERROR_KEY] = (
-            "All information about guest not gathered yet"
-        )
-        return
-
     callback_context.state[constants.PHASE_KEY] = "order placement"
     if constants.ORDER_KEY not in callback_context.state:
         callback_context.state[constants.ORDER_KEY] = OrderService(callback_context)
