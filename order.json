@@ -1,35 +1,85 @@
 [
   {
-    "id": "O1001",
-    "guest_id": "G001",
-    "items": [
-      {"dish_id": "D001", "quantity": 1},
-      {"dish_id": "D005", "quantity": 2}
-    ],
-    "total_price": 797.0,
-    "status": "Delivered",
-    "timestamp": "2025-10-08T12:45:00Z"
+    "id": "O001",
+    "guest_id": "G004",
+    "dishes": [
+      [
+        "Penne Alfredo",
+        {
+          "cream": "reduce cream for lighter texture"
+        }
+      ],
+      [
+        "Greek Gyro Wrap",
+        {}
+      ]
+    ]
   },
   {
-    "id": "O1002",
-    "guest_id": "G002",
-    "items": [
-      {"dish_id": "D002", "quantity": 1},
-      {"dish_id": "D003", "quantity": 1}
-    ],
-    "total_price": 548.0,
-    "status": "Delivered",
-    "timestamp": "2025-10-08T14:20:00Z"
+    "id": "O002",
+    "guest_id": "G005",
+    "dishes": [
+      [
+        "Margherita Pizza",
+        {
+          "basil": "add extra basil"
+        }
+      ],
+      [
+        "Chocolate Lava Cake",
+        {
+          "sugar": "reduce sugar content"
+        }
+      ]
+    ]
   },
   {
-    "id": "O1003",
-    "guest_id": "G003",
-    "items": [
-      {"dish_id": "D004", "quantity": 2},
-      {"dish_id": "D006", "quantity": 2}
-    ],
-    "total_price": 996.0,
-    "status": "In Progress",
-    "timestamp": "2025-10-08T15:05:00Z"
+    "id": "O003",
+    "guest_id": "G006",
+    "dishes": [
+      [
+        "Tandoori Chicken",
+        {
+          "spices": "make it extra spicy"
+        }
+      ],
+      [
+        "Masala Chai",
+        {
+          "sugar": "no sugar"
+        }
+      ]
+    ]
+  },
+  {
+    "id": "O004",
+    "guest_id": "G007",
+    "dishes": [
+      [
+        "Caesar Salad",
+        {
+          "anchovy dressing": "on the side"
+        }
+      ],
+      [
+        "Margherita Pizza",
+        {
+          "olive oil": "extra drizzle"
+        }
+      ]
+    ]
+  },
+  {
+    "id": "O005",
+    "guest_id": "85",
+    "dishes": [
+      [
+        "Greek Gyro Wrap",
+        {
+          "hot sauce": "add",
+          "tzatziki sauce": "lactose-free alternative"
+        }
+      ]
+    ]
   }
 ]

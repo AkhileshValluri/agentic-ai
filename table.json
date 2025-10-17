@@ -6,7 +6,7 @@
       "Near Bar",
       "VIP"
     ],
-    "occupied": true
+    "occupied": false
   },
   {
     "id": "T004",
@@ -15,7 +15,7 @@
       "Birthday Setup",
       "Private Area"
     ],
-    "occupied": true
+    "occupied": false
   },
   {
     "id": "T006",
@@ -23,7 +23,7 @@
     "environment": [
       "Outdoor Seating"
     ],
-    "occupied": true
+    "occupied": false
   },
   {
     "id": "T009",
@@ -72,8 +72,7 @@
       "VIP",
       "Private Area"
     ],
-    "occupied": false,
-    "guest_id": "27"
+    "occupied": false
   },
   {
     "id": "T008",
@@ -82,8 +81,7 @@
       "Conference",
       "Private Area"
     ],
-    "occupied": false,
-    "guest_id": "86"
+    "occupied": false
   },
   {
     "id": "T001",
@@ -98,14 +96,6 @@
     "capacity": 3,
     "environment": [
       "Near Kitchen"
-    ],
-    "occupied": false
-  },
-  {
-    "id": "T007",
-    "capacity": 6,
-    "environment": [
-      "Corner Booth"
     ],
     "occupied": false
   },
@@ -126,5 +116,14 @@
       "Candlelight"
     ],
     "occupied": false
+  },
+  {
+    "id": "T007",
+    "capacity": 6,
+    "environment": [
+      "Corner Booth"
+    ],
+    "occupied": true,
+    "guest_id": "11"
   }
 ]

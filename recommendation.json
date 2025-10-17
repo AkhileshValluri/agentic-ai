@@ -99,5 +99,18 @@
       ]
     ],
     "reason": "lactose-free tzatziki and spicy addition"
+  },
+  {
+    "id": "23",
+    "guest_id": "11",
+    "recommended_dishes": [
+      [
+        "tandoori chicken",
+        {
+          "yogurt": "replace with coconut yogurt"
+        }
+      ]
+    ],
+    "reason": "Dairy-free spicy dish"
   }
 ]
