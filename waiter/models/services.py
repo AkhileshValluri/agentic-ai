@@ -275,12 +275,12 @@ class OrderService:
             # overwrite mods here because handling of modifications should occur through recommendation service
             self._order.dishes[ind][1] = modifications
         except: 
-            self._order.dishes.append((dish, modifications))
+            self._order.dishes.append((dish.name, modifications))
         self._order.save()
     
     @staticmethod
     def get_curr_order_service(tool_context: ToolContext) -> "OrderService": 
-        return tool_context[constants.ORDER_KEY]
+        return tool_context.state[constants.ORDER_KEY]
 
     @staticmethod
     def get_dishes(tool_context: ToolContext): 
