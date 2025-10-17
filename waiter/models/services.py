@@ -241,6 +241,10 @@ class RecommendationService:
         recommendation_service: RecommendationService = tool_context.state[constants.RECOMMENDATION_KEY]
         recommendation_service.store_recommended_dish(recommended_dish, modifications, reason)
         return (True, "")
+    
+    @staticmethod
+    def get_curr_recommendation_service(tool_context: ToolContext) -> "RecommendationService": 
+        return tool_context.state[constants.RECOMMENDATION_KEY]
 
 class OrderService: 
     """
@@ -250,8 +254,9 @@ class OrderService:
     _order: Order
     _guest: Guest
     
-    def __init__(self, callback_context: ToolContext): 
+    def __init__(self, callback_context: CallbackContext): 
         self._guest = GuestStore().get_curr_guest(callback_context.state)
+        self._recommendation_service: RecommendationService = RecommendationService.get_curr_recommendation_service(callback_context)
         self._orders = Order.all()
         self._order = next((order for order in self._orders if order.guest_id == self._guest.id), None)
         if self._order is None: 
@@ -259,44 +264,48 @@ class OrderService:
                 guest_id=self._guest.id,
                 dishes=[],
             )
-
-    def _get_dish_index(self, dish: Dish) -> int:
-        dish_ids: list[str] = [dish[0].id for dish in self._order.dishes]
-        return dish_ids.index(dish.id)
+    
+    def _get_dish_index(self, dish: Dish):
+        dish_names: list[str] = [dish_dto[0] for dish_dto in self._order.dishes]
+        return dish_names.index(dish.name)
 
     def _add_dish(self, dish: Dish, modifications: Optional[dict[str, str]] = {}): 
         try: 
             ind = self._get_dish_index(dish)
+            # overwrite mods here because handling of modifications should occur through recommendation service
             self._order.dishes[ind][1] = modifications
         except: 
             self._order.dishes.append((dish, modifications))
         self._order.save()
+    
+    @staticmethod
+    def get_curr_order_service(tool_context: ToolContext) -> "OrderService": 
+        return tool_context[constants.ORDER_KEY]
 
     @staticmethod
     def get_dishes(tool_context: ToolContext): 
         """
-        Get the current dishes and their modifications
+        Get the current dishes on the guests order list with modifications
         
         Returns: 
             List[tuple[Dish, dict[str, str]]] : list of dishes with their modifications as a tuple
         """
-        order_service: "OrderService" = tool_context[constants.ORDER_KEY]
+        order_service = OrderService.get_curr_order_service(tool_context)
         return order_service._order.dishes
 
     @staticmethod
     def update_dishes(tool_context: ToolContext, dish_names: list[str]):
         """
-        Updates the current state of the dishes to be ordered
+        Updates the current state of the dishes to be ordered with new dishes
 
         Args: 
             dishes(list[str]): name of the dishes as a list
         """
-        recommendation_state: RecommendationService = tool_context.state[constants.RECOMMENDATION_KEY]
-        order_service: OrderService = tool_context.state[constants.ORDER_KEY]
+        order_service = OrderService.get_curr_order_service(tool_context)
 
-        for dish_name in dish_names: 
+        for dish_name in dish_names:
             dish: Dish = DishStore()._get_dish(dish_name)
-            modifications: dict[str, str] = recommendation_state.get_modifications_for_dish(dish)
+            modifications: dict[str, str] = order_service._recommendation_service.get_modifications_for_dish(dish)
             order_service._add_dish((dish, modifications))
     
     @staticmethod
@@ -306,7 +315,7 @@ class OrderService:
         Args: 
             dish(str): name of the dish
         """
-        order_service: "OrderService" = tool_context.state[constants.ORDER_KEY]
+        order_service = OrderService.get_curr_order_service(tool_context)
         recommendation_state: RecommendationService = tool_context.state[constants.RECOMMENDATION_KEY]
 
         dish: Dish = DishStore()._get_dish(dish_name)
@@ -319,9 +328,9 @@ class OrderService:
         """
         Places the order of the dishes
         """
-        order_service: "OrderService" = tool_context[constants.ORDER_KEY]
+        order_service: "OrderService" = tool_context.state[constants.ORDER_KEY]
         order_service._order.save()
-        print(f"Order has been placed for: {json.dumps(order_service._order, indent=2)}")
+        print(f"ORDER HAS BEEN PLACED FOR: {json.dumps(order_service._order, indent=2)}")
 
 class TableStore:
     """

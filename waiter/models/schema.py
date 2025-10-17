@@ -115,7 +115,8 @@ class Recommendation(DB):
 @dataclass
 class Order(DB):
     guest_id: Optional[str] = None
-    dishes: List[tuple[Dish, dict[str, str]]] = field(default_factory=list)
+    # order name, modifications
+    dishes: List[tuple[str, dict[str, str]]] = field(default_factory=list)
     _filename: str = field(default="order.json", init=False, repr=False)
 
     @staticmethod

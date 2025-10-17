@@ -2,15 +2,16 @@
 
 from google.adk.agents import LlmAgent
 from waiter.sub_agents.ordering import prompt
-from waiter.tools.places import map_tool
-from waiter.models.services import OrderService, DishStore
+from waiter.models.services import OrderService
 from waiter.tools.memory import order_model_init
+from waiter.sub_agents.recommendation.agent import recommendations_refinement_loop_agent
 
 ordering_agent = LlmAgent(
     model="gemini-2.0-flash",
-    name="inspiration_agent",
+    name="ordering_agent",
     description="Agent which takes a customers order and places the order",
     instruction=prompt.order_agent_instr,
     tools=[OrderService.get_dishes, OrderService.update_dishes, OrderService.place_order],
+    sub_agents=[recommendations_refinement_loop_agent],
     before_agent_callback=order_model_init
 )
